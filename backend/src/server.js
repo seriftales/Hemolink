@@ -2,7 +2,8 @@ const express = require('express')
 const app = express()
 const PORT = 8383
 let data = {
-    name: 'Halil'
+    name: 'Halil',
+    age : 25,
 }
 
 
