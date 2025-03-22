@@ -1,0 +1,19 @@
+# Node.js
+node_modules/
+npm-debug.log
+
+# Expo
+.expo/
+.expo-shared/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Linux
+*.swp
+
+# .vscode dizinini hariç tutmak için bu satırı kaldırın veya yorum satırı yapın
+.vscode/
