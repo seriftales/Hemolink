@@ -9,6 +9,7 @@ const FormInput = ({ placeholder, value, onChangeText, secureTextEntry }) => {
       value={value}
       onChangeText={onChangeText}
       secureTextEntry={secureTextEntry}
+      placeholderTextColor="#999"
     />
   );
 };
@@ -16,11 +17,12 @@ const FormInput = ({ placeholder, value, onChangeText, secureTextEntry }) => {
 const styles = StyleSheet.create({
   input: {
     width: '100%',
-    padding: 10,
+    padding: 15,
     marginVertical: 10,
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 5,
+    borderRadius: 10,
+    backgroundColor: '#fff',
   },
 });
 

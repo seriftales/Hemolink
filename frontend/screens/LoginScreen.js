@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import FormInput from '../components/FormInput';
 
 const LoginScreen = ({ navigation }) => {
@@ -8,7 +8,8 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login Screen</Text>
+      <Image source={require('../assets/blood-donation.png')} style={styles.image} />
+      <Text style={styles.title}>Kan Bağışı Uygulaması</Text>
       <FormInput
         placeholder="Email"
         value={email}
@@ -20,7 +21,9 @@ const LoginScreen = ({ navigation }) => {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button title="Login" onPress={() => navigation.navigate('Home')} />
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
+        <Text style={styles.buttonText}>Giriş Yap</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -31,10 +34,31 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
+    backgroundColor: '#f5f5f5',
+  },
+  image: {
+    width: 150,
+    height: 150,
+    marginBottom: 24,
   },
   title: {
-    fontSize: 24,
-    marginBottom: 16,
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#e74c3c',
+    marginBottom: 24,
+  },
+  button: {
+    backgroundColor: '#e74c3c',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 20,
+    width: '100%',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 
