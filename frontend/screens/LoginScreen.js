@@ -10,7 +10,7 @@ const LoginScreen = ({ navigation }) => {
     <ImageBackground source={require('../assets/background.png')} style={styles.background}>
       <View style={styles.container}>
         <Image source={require('../assets/blood-donation.png')} style={styles.image} />
-        <Text style={styles.title}>Kan Bağışı Uygulaması</Text>
+        <Text style={styles.title}>HemoLink-419</Text>
         <FormInput
           placeholder="Email"
           value={email}
@@ -24,6 +24,9 @@ const LoginScreen = ({ navigation }) => {
         />
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
           <Text style={styles.buttonText}>Giriş Yap</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Register')}>
+          <Text style={styles.buttonText}>Kayıt Ol</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
