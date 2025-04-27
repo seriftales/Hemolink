@@ -1,35 +1,67 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
-import FormInput from '../components/FormInput';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, Alert } from 'react-native';
+import FormInput from '../components/FormInput'; // Doğru import edilmiş hali
 
 const RegisterScreen = ({ navigation }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return email.trim() !== '' && emailRegex.test(email.trim());
+  };
+
+  const handleRegister = () => {
+    if (!name.trim() || !email.trim() || !password.trim()) {
+      Alert.alert('Hata', 'Lütfen tüm alanları doldurun.');
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      Alert.alert('Hata', 'Geçerli bir e-posta adresi girin.');
+      return;
+    }
+
+    if (password.length < 8) {
+      Alert.alert('Hata', 'Şifre en az 8 karakter olmalıdır.');
+      return;
+    }
+
+    // Başarılı kayıt
+    Alert.alert('Başarılı', 'Kayıt başarılı!');
+    navigation.navigate('Login');
+  };
+
   return (
     <ImageBackground source={require('../assets/background.png')} style={styles.background}>
       <View style={styles.container}>
         <Text style={styles.title}>Kayıt Ol</Text>
+
         <FormInput
           placeholder="Adınız"
           value={name}
           onChangeText={setName}
         />
+
         <FormInput
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
+          keyboardType="email-address" // ← Eklendi!
         />
+
         <FormInput
           placeholder="Şifre"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
         />
-        <TouchableOpacity style={styles.button} onPress={() => alert('Kayıt başarılı!')}>
+
+        <TouchableOpacity style={styles.button} onPress={handleRegister}>
           <Text style={styles.buttonText}>Kayıt Ol</Text>
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Login')}>
           <Text style={styles.loginButtonText}>Zaten hesabınız var mı? Giriş Yap</Text>
         </TouchableOpacity>
@@ -48,7 +80,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Arka plan resminin üzerindeki beyaz katman
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
   },
   title: {
     fontSize: 28,

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ImageBackground, Image } from 'react-native';
 import Header from '../components/Header';
 import Button from '../components/Button';
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   return (
     <ImageBackground source={require('../assets/background.png')} style={styles.background}>
       <View style={styles.container}>
@@ -12,6 +12,11 @@ const HomeScreen = () => {
           <Image source={require('../assets/blood-drop.png')} style={styles.image} />
           <Text style={styles.welcomeText}>Hoş Geldiniz!</Text>
           <Button title="Bağış Yap" onPress={() => alert('Bağış yapıldı!')} />
+          {/* Yeni Buton */}
+          <Button
+            title="En Yakın Kan Bağış Merkezlerini Gör"
+            onPress={() => navigation.navigate('NearbyCenters')}
+          />
         </View>
       </View>
     </ImageBackground>
