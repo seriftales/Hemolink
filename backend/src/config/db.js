@@ -11,7 +11,7 @@ require ('dotenv').config(); //env dosyasındaki bilgileri kullanabilmek için d
 const pool = new Pool({
   host: 'localhost' ,
   database: 'hemolink',
-  user:'kaan',
+  user:'postgres',
   password: 'a' ,
   port: 5432,
 });
