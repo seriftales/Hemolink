@@ -1,29 +1,36 @@
 const pool = require('../config/db.js');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-const loginUser = async (email, password) => {
-    try {
-        // Kullanıcıyı email ile sorguluyoruz
-        const query = 'SELECT * FROM users WHERE email = $1';
-        const result = await pool.query(query, [email]);
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
 
-        if (result.rows.length === 0) {
-            // Kullanıcı bulunamadıysa
-            return { success: false, message: 'Kullanıcı bulunamadı!' };
-        }
+  try {
+    const query = 'SELECT * FROM users WHERE email = $1';
+    const result = await pool.query(query, [email]);
 
-        const user = result.rows[0];
-
-        // Şifreyi kontrol ediyoruz
-        if (user.password === password) {
-            return { success: true, message: 'Giriş başarılı!', user };
-        } else {
-            return { success: false, message: 'Yanlış şifre!' };
-        }
-
-    } catch (error) {
-        console.error('Giriş hatası:', error);
-        return { success: false, message: 'Bir hata oluştu!' };
+    if (result.rows.length === 0) {
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
+
+    const user = result.rows[0];
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    const token = jwt.sign({ id: user.id }, `cokgizli`, { expiresIn: '1h' });
+    res.json({ token, user: { id: user.id, email: user.email } });
+
+  } catch (error) {
+    console.error('Error logging in user:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 };
 
-module.exports = { loginUser };
+const logOutUser = (req, res) => {
+  res.json({ message: 'User logged out successfully' });
+};
+
+module.exports = { loginUser, logOutUser };

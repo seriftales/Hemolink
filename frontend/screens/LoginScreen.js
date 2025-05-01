@@ -1,11 +1,26 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground } from 'react-native';
 import FormInput from '../components/FormInput';
+import { loginReq , logoutReq } from '/home/kaan/hemolink-419/frontend/services/api.js'; // login API isteği için gerekli fonksiyon
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  
+  const handleLogin = async () => {
+    try {
+      const data = await loginReq(email, password); // login API isteğini yapıyoruz
+      await AsyncStorage.setItem('token', data.token); // Token'ı AsyncStorage'a kaydediyoruz
+      navigation.navigate('Home'); // Ana ekrana yönlendirme yapıyoruz
+    
+    } catch (error) {
+      console.error('Login error:', error);
+      Alert.alert('Giriş Başarısız', 'Lütfen bilgilerinizi kontrol edin.'); // Hata mesajı gösteriyoruz
+    }
+  };
+  
+  
   return (
     <ImageBackground source={require('../assets/background.png')} style={styles.background}>
       <View style={styles.container}>
@@ -22,7 +37,7 @@ const LoginScreen = ({ navigation }) => {
           onChangeText={setPassword}
           secureTextEntry
         />
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}> 
           <Text style={styles.buttonText}>Giriş Yap</Text>
         </TouchableOpacity>
       </View>
