@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextInput, StyleSheet } from 'react-native';
 
-const FormInput = ({ placeholder, value, onChangeText, secureTextEntry }) => {
+const FormInput = ({ placeholder, value, onChangeText, secureTextEntry, keyboardType = 'default' }) => {
   return (
     <TextInput
       style={styles.input}
@@ -9,6 +9,9 @@ const FormInput = ({ placeholder, value, onChangeText, secureTextEntry }) => {
       value={value}
       onChangeText={onChangeText}
       secureTextEntry={secureTextEntry}
+      keyboardType={keyboardType}
+      autoCapitalize="none"
+      autoCorrect={false}
       placeholderTextColor="#999"
     />
   );

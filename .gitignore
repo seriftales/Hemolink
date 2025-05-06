@@ -17,3 +17,5 @@ Thumbs.db
 
 # .vscode dizinini hariç tutmak için bu satırı kaldırın veya yorum satırı yapın
 .vscode/
+
+package-lock.json
