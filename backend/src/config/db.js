@@ -7,14 +7,35 @@
 const {Pool} = require('pg');  
 
 require ('dotenv').config(); //env dosyasındaki bilgileri kullanabilmek için dotenv kütüphanesini ekliyoruz
+// Veritabanı bağlantısını sağlayan asenkron fonksiyon
+const connectDB = async () => {
+  try {
+    const pool = new Pool({
+      host: 'localhost',
+      database: 'postgres',
+      user: 'postgres',
+      password: 'a',
+      port: 5432,
+    });
 
-const pool = new Pool({
-  host: 'localhost' ,
-  database: 'hemolink',
-  user:'postgres',
-  password: 'a' ,
-  port: 5432,
-});
+    // Bağlantı kontrolü (async)
+    await pool.connect();
+    console.log('PostgreSQL veritabanına başarıyla bağlanıldı');
+    return pool;
+  } catch (error) {
+    console.error('Veritabanı bağlantı hatası:', error);
+    throw error; // Bağlantı hatası durumunda hata fırlat
+  }
+};
 
-module.exports = pool ; 
+// const pool = new Pool({
+//   host: 'localhost' ,
+//   database: 'hemolink',
+//   user:'postgres',
+//   password: 'a' ,
+//   port: 5432,
+// });
+// }
+
+module.exports = {connectDB} ; 
 

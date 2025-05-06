@@ -9,13 +9,22 @@ const LoginScreen = ({ navigation }) => {
 
   
   const handleLogin = async () => {
+    
+    console.log("Butona basıldı") ; 
     try {
       const data = await loginReq(email, password); // login API isteğini yapıyoruz
-      await AsyncStorage.setItem('token', data.token); // Token'ı AsyncStorage'a kaydediyoruz
-      navigation.navigate('Home'); // Ana ekrana yönlendirme yapıyoruz
+      console.log('Login data:', data); // API'den dönen veriyi konsola yazdırıyoruz
+      console.log('Token:', data.token); // Token'ı konsola yazdırıyoruz
+      // if (!data.token) {
+      //   throw new Error("Token alınamadı.");
+      // }
+  
+      
+    //  await asyncStorage.setItem('token', data.token); // Token'ı AsyncStorage'a kaydediyoruz
+      await navigation.navigate('Home'); // Ana ekrana yönlendirme yapıyoruz
     
     } catch (error) {
-      console.error('Login error:', error);
+      console.log('Login error:', error);
       Alert.alert('Giriş Başarısız', 'Lütfen bilgilerinizi kontrol edin.'); // Hata mesajı gösteriyoruz
     }
   };
@@ -35,7 +44,7 @@ const LoginScreen = ({ navigation }) => {
           placeholder="Password"
           value={password}
           onChangeText={setPassword}
-          secureTextEntry
+          
         />
         <TouchableOpacity style={styles.button} onPress={handleLogin}> 
           <Text style={styles.buttonText}>Giriş Yap</Text>

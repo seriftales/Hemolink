@@ -1,17 +1,17 @@
+// api.js
+const BASE_URL = 'http://192.168.121.254:3000'; // kendi IP ve portuna göre ayarla
 
-const BASE_URL = 'http://192.168.1.47:3000'; // kendi IP ve portuna göre ayarla
-
-
-export const loginReq = async (email, password) => {
+const loginReq = async (email, password) => {
     try {
-      const response = await fetch(`${BASE_URL}/login`, {
+      console.log("loginReq çalıştı");
+      const response = await fetch(`http://192.168.121.254:3000/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
       });
-  
+      console.log("loginReq çalıştı 2");
       const data = await response.json();
   
       if (!response.ok) {
@@ -21,12 +21,12 @@ export const loginReq = async (email, password) => {
       return data; // { token, user }
     
     } catch (error) {
-      console.error('loginUser API error:', error.message);
+      alert('Email veya Şifre yanlış tekrar deneyiniz!:', error.message);
       throw error;
     }
   };
   
-  export const logoutReq = async () => {
+const logoutReq = async () => {
     try {
       const response = await fetch(`${BASE_URL}/logout`, {
         method: 'POST',
@@ -38,4 +38,9 @@ export const loginReq = async (email, password) => {
       console.error('logoutUser API error:', error.message);
       throw error;
     }
+  };
+
+module.exports = {
+    loginReq,
+    logoutReq,
   };
