@@ -1,3 +1,4 @@
+--Tablolar 
 CREATE TABLE  users (
     
     name VARCHAR(255) ,

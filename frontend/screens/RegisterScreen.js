@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, Alert } from 'react-native';
 import FormInput from '../components/FormInput'; // Doğru import edilmiş hali
+import { registerReq } from  '../services/api.js'; 
 
 const RegisterScreen = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -12,27 +13,44 @@ const RegisterScreen = ({ navigation }) => {
     return email.trim() !== '' && emailRegex.test(email.trim());
   };
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
+    // 1. Boş alan kontrolü
     if (!name.trim() || !email.trim() || !password.trim()) {
       Alert.alert('Hata', 'Lütfen tüm alanları doldurun.');
       return;
     }
-
+  
+    // 2. E-posta doğrulama
     if (!validateEmail(email)) {
       Alert.alert('Hata', 'Geçerli bir e-posta adresi girin.');
       return;
     }
-
+  
+    // 3. Şifre uzunluk kontrolü
     if (password.length < 8) {
       Alert.alert('Hata', 'Şifre en az 8 karakter olmalıdır.');
       return;
     }
-
-    // Başarılı kayıt
-    Alert.alert('Başarılı', 'Kayıt başarılı!');
-    navigation.navigate('Login');
+  
+    // 4. API isteği
+    try {
+      const data = await registerReq(name, email, password);
+      console.log('Register data:', data);
+      console.log('Token:', data.token);
+  
+      // await AsyncStorage.setItem('token', data.token); // Gerekirse token kaydet
+  
+      Alert.alert('Kayıt Başarılı', 'Lütfen giriş yapın.');
+      navigation.navigate('Login');
+    } catch (error) {
+      console.log('Register error:', error);
+      Alert.alert('Kayıt Başarısız', 'Lütfen bilgilerinizi kontrol edin.');
+    }
   };
-
+  
+ 
+ 
+ 
   return (
     <ImageBackground source={require('../assets/background.png')} style={styles.background}>
       <View style={styles.container}>

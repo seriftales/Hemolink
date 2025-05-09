@@ -1,6 +1,5 @@
 // login.js
 const {connectDB} = require('../config/db.js');
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const loginUser = async (req, res) => {
@@ -8,9 +7,9 @@ const loginUser = async (req, res) => {
   console.log("login user")
   console.log("email", email)
   try {
-    const query = 'SELECT * FROM users WHERE email = $1';
-    const q = await connectDB()
-    const result = await q.query(query, [email]);
+    const query = 'SELECT * FROM users WHERE email = $1'; 
+    const data = await connectDB()
+    const result = await data.query(query, [email]);
     console.log('Result:', result.rows[0]);
 
     if (!result.rows) {
