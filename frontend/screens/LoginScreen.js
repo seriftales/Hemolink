@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground } from 'react-native';
 import FormInput from '../components/FormInput';
-import { loginReq , logoutReq } from '/home/kaan/hemolink-419/frontend/services/api.js'; // login API isteği için gerekli fonksiyon
+import { loginReq , logoutReq } from '../services/api.js'; // login API isteği için gerekli fonksiyon
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
   
   const handleLogin = async () => {
     
-    console.log("Butona basıldı") ; 
     try {
       const data = await loginReq(email, password); // login API isteğini yapıyoruz
       console.log('Login data:', data); // API'den dönen veriyi konsola yazdırıyoruz
@@ -30,6 +28,7 @@ const LoginScreen = ({ navigation }) => {
   };
   
   
+ 
   return (
     <ImageBackground source={require('../assets/background.png')} style={styles.background}>
       <View style={styles.container}>

@@ -3,10 +3,8 @@
 /*
     Bu dosya, PostgreSQL veritabanı bağlantısını yapılandırmak için kullanılır.
 */
-
 const {Pool} = require('pg');  
 
-require ('dotenv').config(); //env dosyasındaki bilgileri kullanabilmek için dotenv kütüphanesini ekliyoruz
 // Veritabanı bağlantısını sağlayan asenkron fonksiyon
 const connectDB = async () => {
   try {
@@ -28,14 +26,7 @@ const connectDB = async () => {
   }
 };
 
-// const pool = new Pool({
-//   host: 'localhost' ,
-//   database: 'hemolink',
-//   user:'postgres',
-//   password: 'a' ,
-//   port: 5432,
-// });
-// }
+
 
 module.exports = {connectDB} ; 
 

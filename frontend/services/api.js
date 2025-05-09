@@ -1,17 +1,16 @@
 // api.js
-const BASE_URL = 'http://192.168.121.254:3000'; // kendi IP ve portuna göre ayarla
+const BASE_URL = 'http://192.168.98.184:3000'; // kendi IP ve portuna göre ayarla
 
 const loginReq = async (email, password) => {
     try {
-      console.log("loginReq çalıştı");
-      const response = await fetch(`http://192.168.121.254:3000/login`, {
+      const response = await fetch(`${BASE_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
       });
-      console.log("loginReq çalıştı 2");
+      
       const data = await response.json();
   
       if (!response.ok) {
@@ -40,7 +39,38 @@ const logoutReq = async () => {
     }
   };
 
-module.exports = {
+const registerReq = async (name, email, password) => {
+    console.log("registerReq çalıştı");
+    try {
+      const response = await fetch(`${BASE_URL}/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+      console.log("registerReq çalıştı 2");
+      
+      const data  = await response.json(); 
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Kayıt başarısız');
+      }
+  
+      return data; // { token, user }
+    } catch (error) {
+      console.error('Kayıt işlemi sırasında bir hata oluştu:', error.message);
+      alert('Kayıt işlemi sırasında bir hata oluştu: ' + error.message);
+      throw error; // Hata yakalama
+    }
+  };
+  
+
+
+
+
+  module.exports = {
     loginReq,
     logoutReq,
+    registerReq
   };
