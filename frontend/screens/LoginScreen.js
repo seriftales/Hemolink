@@ -1,11 +1,35 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground } from 'react-native';
 import FormInput from '../components/FormInput';
+import { loginReq , logoutReq } from '/home/kaan/hemolink-419/frontend/services/api.js'; // login API isteği için gerekli fonksiyon
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  
+  const handleLogin = async () => {
+    
+    console.log("Butona basıldı") ; 
+    try {
+      const data = await loginReq(email, password); // login API isteğini yapıyoruz
+      console.log('Login data:', data); // API'den dönen veriyi konsola yazdırıyoruz
+      console.log('Token:', data.token); // Token'ı konsola yazdırıyoruz
+      // if (!data.token) {
+      //   throw new Error("Token alınamadı.");
+      // }
+  
+      
+    //  await asyncStorage.setItem('token', data.token); // Token'ı AsyncStorage'a kaydediyoruz
+      await navigation.navigate('Home'); // Ana ekrana yönlendirme yapıyoruz
+    
+    } catch (error) {
+      console.log('Login error:', error);
+      Alert.alert('Giriş Başarısız', 'Lütfen bilgilerinizi kontrol edin.'); // Hata mesajı gösteriyoruz
+    }
+  };
+  
+  
   return (
     <ImageBackground source={require('../assets/background.png')} style={styles.background}>
       <View style={styles.container}>
@@ -20,9 +44,9 @@ const LoginScreen = ({ navigation }) => {
           placeholder="Password"
           value={password}
           onChangeText={setPassword}
-          secureTextEntry
+          
         />
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}> 
           <Text style={styles.buttonText}>Giriş Yap</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Register')}>
