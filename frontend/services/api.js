@@ -1,5 +1,5 @@
 // api.js
-const BASE_URL = 'http://192.168.98.184:3000'; // kendi IP ve portuna göre ayarla
+const BASE_URL = 'http://192.168.121.254:3000'; // kendi IP ve portuna göre ayarla
 
 const loginReq = async (email, password) => {
     try {
@@ -25,19 +25,6 @@ const loginReq = async (email, password) => {
     }
   };
   
-const logoutReq = async () => {
-    try {
-      const response = await fetch(`${BASE_URL}/logout`, {
-        method: 'POST',
-      });
-  
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('logoutUser API error:', error.message);
-      throw error;
-    }
-  };
 
 const registerReq = async (name, email, password) => {
     console.log("registerReq çalıştı");
@@ -65,12 +52,28 @@ const registerReq = async (name, email, password) => {
     }
   };
   
+const hospitalReq = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/hospital`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Hastane verisi alınamadı');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Hastane verisi alma hatası:', error.message);
+    return [];
+  }
+};
+
 
 
 
 
   module.exports = {
     loginReq,
-    logoutReq,
-    registerReq
+    registerReq,
+    hospitalReq
   };
