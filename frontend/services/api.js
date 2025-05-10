@@ -52,11 +52,28 @@ const registerReq = async (name, email, password) => {
     }
   };
   
+const hospitalReq = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/hospital`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Hastane verisi alınamadı');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Hastane verisi alma hatası:', error.message);
+    return [];
+  }
+};
+
 
 
 
 
   module.exports = {
     loginReq,
-    registerReq
+    registerReq,
+    hospitalReq
   };
