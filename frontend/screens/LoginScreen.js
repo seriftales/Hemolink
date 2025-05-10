@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground } from 'react-native';
 import FormInput from '../components/FormInput';
-import { loginReq , logoutReq } from '../services/api.js'; // login API isteği için gerekli fonksiyon
+import { loginReq } from '../services/api.js'; // login API isteği için gerekli fonksiyon
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
