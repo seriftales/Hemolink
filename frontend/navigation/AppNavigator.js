@@ -1,24 +1,32 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
-import LoginScreen from '../screens/LoginScreen';
+
+// Ekranlar
+import LoginSelectionScreen from '../screens/LoginSelectionScreen';
+import DonorLoginScreen from '../screens/DonorLoginScreen';
+import HospitalLoginScreen from '../screens/HospitalLoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import HomeScreen from '../screens/HomeScreen';
 import NearbyCentersScreen from '../screens/NearbyCentersScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Navigator initialRouteName="LoginSelection" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="LoginSelection" component={LoginSelectionScreen} />
+        <Stack.Screen name="DonorLogin" component={DonorLoginScreen} />
+        <Stack.Screen name="HospitalLogin" component={HospitalLoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="NearbyCenters" component={NearbyCentersScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
       </Stack.Navigator>
     </NavigationContainer>
-  ); bu 
+  );
 };
 
 export default AppNavigator;
