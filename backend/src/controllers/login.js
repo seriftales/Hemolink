@@ -40,8 +40,4 @@ const loginUser = async (req, res) => {
   }
 };
 
-const logOutUser = (req, res) => {
-  res.json({ message: 'User logged out successfully' });
-};
-
-module.exports = { loginUser, logOutUser };
+module.exports = { loginUser };
