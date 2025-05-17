@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity,
-  Image, ImageBackground, Alert
+  ImageBackground, Alert
 } from 'react-native';
 import FormInput from '../components/FormInput';
 import { loginReq } from '../services/api';
@@ -14,8 +14,7 @@ const DonorLoginScreen = ({ navigation }) => {
     try {
       const data = await loginReq(email, password);
       console.log('Login data:', data);
-      console.log('Token:', data.token);
-      navigation.navigate('Home');
+      navigation.navigate('Home', { user: data.user }); // ✅ user'ı gönder
     } catch (error) {
       console.log('Login error:', error);
       Alert.alert('Giriş Başarısız', 'Lütfen bilgilerinizi kontrol edin.');
@@ -26,21 +25,18 @@ const DonorLoginScreen = ({ navigation }) => {
     <ImageBackground
       source={require('../assets/background.png')}
       style={styles.background}
+      resizeMode="cover"
     >
       <View style={styles.container}>
-        {/* 🔴 Geri Butonu */}
+        {/* 🔙 Geri Butonu */}
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text style={styles.backButtonText}>← Geri</Text>
         </TouchableOpacity>
 
-        {/* 🩸 Bağış Görseli */}
-        <Image
-          source={require('../assets/blood-donation.png')}
-          style={styles.image}
-        />
-
+        {/* 🔺 Başlık */}
         <Text style={styles.title}>Bağışçı Girişi</Text>
 
+        {/* 📥 Giriş Alanları */}
         <FormInput
           placeholder="Email"
           value={email}
@@ -53,17 +49,17 @@ const DonorLoginScreen = ({ navigation }) => {
           secureTextEntry
         />
 
-        {/* 🟠 Giriş Yap Butonu */}
+        {/* 🔘 Giriş Butonu */}
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Giriş Yap</Text>
         </TouchableOpacity>
 
-        {/* 🟠 Kayıt Ol Butonu */}
+        {/* 🟰 Kayıt Butonu */}
         <TouchableOpacity
-          style={styles.button}
+          style={styles.buttonSecondary}
           onPress={() => navigation.navigate('Register')}
         >
-          <Text style={styles.buttonText}>Kayıt Ol</Text>
+          <Text style={styles.buttonSecondaryText}>Kayıt Ol</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
@@ -73,14 +69,14 @@ const DonorLoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    resizeMode: 'cover',
+    width: '100%',
+    height: '100%',
   },
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0)',
+    padding: 24,
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
   },
   backButton: {
     position: 'absolute',
@@ -94,19 +90,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  image: {
-    width: 150,
-    height: 150,
-    marginBottom: 24,
-    borderRadius: 75,
-    elevation: 5,
-  },
   title: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: 'bold',
     color: '#e74c3c',
-    marginBottom: 24,
     textAlign: 'center',
+    marginBottom: 32,
   },
   button: {
     backgroundColor: '#e74c3c',
@@ -114,12 +103,23 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     marginTop: 20,
-    width: '100%',
-    elevation: 5,
   },
   buttonText: {
     color: '#fff',
     fontSize: 18,
+    fontWeight: 'bold',
+  },
+  buttonSecondary: {
+    borderWidth: 2,
+    borderColor: '#e74c3c',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 12,
+  },
+  buttonSecondaryText: {
+    color: '#e74c3c',
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });

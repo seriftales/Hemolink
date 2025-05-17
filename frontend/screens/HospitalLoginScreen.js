@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Image,
   ImageBackground,
   Alert,
 } from 'react-native';
@@ -19,7 +18,7 @@ const HospitalLoginScreen = ({ navigation }) => {
     try {
       const data = await hospitalLoginReq(email, password);
       console.log('Hospital login:', data);
-      navigation.navigate('Home'); // giriş sonrası yönlendirme
+      navigation.navigate('Home');
     } catch (error) {
       console.log('Hospital login error:', error);
       Alert.alert('Giriş Başarısız', 'Bilgilerinizi kontrol edin.');
@@ -28,23 +27,15 @@ const HospitalLoginScreen = ({ navigation }) => {
 
   return (
     <ImageBackground
-      source={require('../assets/backgroundOfHospital.png')} // Arka plan görseli burada
+      source={require('../assets/hospital-background.png')}
       style={styles.background}
       resizeMode="cover"
     >
-      <View style={styles.overlay}>
+      <View style={styles.container}>
         {/* 🔙 Geri Butonu */}
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text style={styles.backButtonText}>← Geri</Text>
         </TouchableOpacity>
-
-        {/* 🏥 Üstteki Kan Bağışı Görseli */}
-        <Image
-          source={require('../assets/blood-donation.png')}
-          style={styles.image}
-        />
-
-        <Text style={styles.title}>Hastane Girişi</Text>
 
         <FormInput
           placeholder="Email"
@@ -61,6 +52,8 @@ const HospitalLoginScreen = ({ navigation }) => {
         <TouchableOpacity style={styles.button} onPress={handleHospitalLogin}>
           <Text style={styles.buttonText}>Giriş Yap</Text>
         </TouchableOpacity>
+
+        {/* Kayıt butonu bilinçli olarak eklenmedi */}
       </View>
     </ImageBackground>
   );
@@ -72,13 +65,14 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  overlay: {
+  container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.4)', // Saydam beyaz katman
+    padding: 24,
+    paddingTop: 100, // 👈 BU satırı ekle! (40 = hafif kayma)
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
+  
   backButton: {
     position: 'absolute',
     top: 50,
@@ -91,19 +85,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  image: {
-    width: 150,
-    height: 150,
-    marginBottom: 24,
-    borderRadius: 75,
-    elevation: 5,
-  },
   title: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: 'bold',
     color: '#e74c3c',
-    marginBottom: 24,
     textAlign: 'center',
+    marginBottom: 32,
   },
   button: {
     backgroundColor: '#e74c3c',
@@ -111,8 +98,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     marginTop: 20,
-    width: '100%',
-    elevation: 5,
   },
   buttonText: {
     color: '#fff',

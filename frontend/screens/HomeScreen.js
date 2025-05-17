@@ -3,19 +3,32 @@ import { View, Text, StyleSheet, ImageBackground, Image } from 'react-native';
 import Header from '../components/Header';
 import Button from '../components/Button';
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation, route }) => {
+  const user = route.params?.user;
+  console.log("🏠 HomeScreen gelen user:", user);
+
+
   return (
     <ImageBackground source={require('../assets/background.png')} style={styles.background}>
       <View style={styles.container}>
         <Header title="HemoLink-419" style={styles.headerText} />
+
         <View style={styles.content}>
           <Image source={require('../assets/blood-drop.png')} style={styles.image} />
-          <Text style={styles.welcomeText}>Hoş Geldiniz!</Text>
+          <Text style={styles.welcomeText}>
+            Hoş Geldiniz{user?.name ? `, ${user.name}` : ''}!
+          </Text>
+
           <Button title="Bağış Yap" onPress={() => alert('Bağış yapıldı!')} />
-          {/* Yeni Buton */}
+
           <Button
             title="En Yakın Kan Bağış Merkezlerini Gör"
             onPress={() => navigation.navigate('NearbyCenters')}
+          />
+
+          <Button
+            title="Profilim"
+            onPress={() => navigation.navigate('Profile', { user })}
           />
         </View>
       </View>
@@ -30,7 +43,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Arka plan resminin üzerindeki beyaz katman
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
   },
   content: {
     flex: 1,

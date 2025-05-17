@@ -1,45 +1,36 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, Alert } from 'react-native';
-import FormInput from '../components/FormInput'; // Doğru import edilmiş hali
-import { registerReq } from  '../services/api.js'; 
+import {
+  View, Text, StyleSheet, TouchableOpacity, Alert,
+  ImageBackground // 📌 Picker eklendi!
+} from 'react-native';
+import { Picker } from '@react-native-picker/picker'; // ✅ doğru import
+import FormInput from '../components/FormInput';
+import { registerReq } from '../services/api';
 
 const RegisterScreen = ({ navigation }) => {
   const [name, setName] = useState('');
+  const [surname, setSurname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return email.trim() !== '' && emailRegex.test(email.trim());
-  };
+  const [age, setAge] = useState('');
+  const [bloodType, setBloodType] = useState('A+');
 
   const handleRegister = async () => {
-    // 1. Boş alan kontrolü
-    if (!name.trim() || !email.trim() || !password.trim()) {
+    if (!name || !surname || !email || !password || !age || !bloodType) {
       Alert.alert('Hata', 'Lütfen tüm alanları doldurun.');
       return;
     }
-  
-    // 2. E-posta doğrulama
-    if (!validateEmail(email)) {
-      Alert.alert('Hata', 'Geçerli bir e-posta adresi girin.');
-      return;
-    }
-  
-    // 3. Şifre uzunluk kontrolü
-    if (password.length < 8) {
-      Alert.alert('Hata', 'Şifre en az 8 karakter olmalıdır.');
-      return;
-    }
-  
-    // 4. API isteği
+
     try {
-      const data = await registerReq(name, email, password);
+      const data = await registerReq({
+        name,
+        surname,
+        email,
+        password,
+        age: parseInt(age),
+        blood_type: bloodType
+      });
       console.log('Register data:', data);
-      console.log('Token:', data.token);
-  
-      // await AsyncStorage.setItem('token', data.token); // Gerekirse token kaydet
-  
       Alert.alert('Kayıt Başarılı', 'Lütfen giriş yapın.');
       navigation.navigate('Login');
     } catch (error) {
@@ -47,40 +38,45 @@ const RegisterScreen = ({ navigation }) => {
       Alert.alert('Kayıt Başarısız', 'Lütfen bilgilerinizi kontrol edin.');
     }
   };
-  
- 
- 
- 
+
   return (
-    <ImageBackground source={require('../assets/background.png')} style={styles.background}>
+    <ImageBackground
+      source={require('../assets/background.png')}
+      style={styles.background}
+    >
       <View style={styles.container}>
         <Text style={styles.title}>Kayıt Ol</Text>
 
-        <FormInput
-          placeholder="Adınız"
-          value={name}
-          onChangeText={setName}
-        />
+        <FormInput placeholder="Adınız" value={name} onChangeText={setName} />
+        <FormInput placeholder="Soyadınız" value={surname} onChangeText={setSurname} />
+        <FormInput placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" />
+        <FormInput placeholder="Şifre" value={password} onChangeText={setPassword} secureTextEntry />
+        <FormInput placeholder="Yaş" value={age} onChangeText={setAge} keyboardType="numeric" />
 
-        <FormInput
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address" // ← Eklendi!
-        />
-
-        <FormInput
-          placeholder="Şifre"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+        {/* 🔻 Kan Grubu Seçimi */}
+        <View style={styles.pickerContainer}>
+          <Text style={styles.pickerLabel}>Kan Grubu:</Text>
+          <Picker
+            selectedValue={bloodType}
+            style={styles.picker}
+            onValueChange={(itemValue) => setBloodType(itemValue)}
+          >
+            <Picker.Item label="A+" value="A+" />
+            <Picker.Item label="A-" value="A-" />
+            <Picker.Item label="B+" value="B+" />
+            <Picker.Item label="B-" value="B-" />
+            <Picker.Item label="AB+" value="AB+" />
+            <Picker.Item label="AB-" value="AB-" />
+            <Picker.Item label="0+" value="0+" />
+            <Picker.Item label="0-" value="0-" />
+          </Picker>
+        </View>
 
         <TouchableOpacity style={styles.button} onPress={handleRegister}>
           <Text style={styles.buttonText}>Kayıt Ol</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Login')}>
+        <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('DonorLogin')}>
           <Text style={styles.loginButtonText}>Zaten hesabınız var mı? Giriş Yap</Text>
         </TouchableOpacity>
       </View>
@@ -91,14 +87,12 @@ const RegisterScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    resizeMode: 'cover',
   },
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    padding: 24,
+    backgroundColor: 'rgba(255,255,255,0.85)',
   },
   title: {
     fontSize: 28,
@@ -107,18 +101,25 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     textAlign: 'center',
   },
+  pickerContainer: {
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  pickerLabel: {
+    fontWeight: 'bold',
+    color: '#e74c3c',
+    marginBottom: 5,
+  },
+  picker: {
+    height: 50,
+    backgroundColor: '#fff',
+  },
   button: {
     backgroundColor: '#e74c3c',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
     marginTop: 20,
-    width: '100%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-    elevation: 5,
   },
   buttonText: {
     color: '#fff',
@@ -126,13 +127,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   loginButton: {
-    marginTop: 10,
-    padding: 15,
-    borderRadius: 10,
+    marginTop: 12,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#e74c3c',
-    width: '100%',
   },
   loginButtonText: {
     color: '#e74c3c',
