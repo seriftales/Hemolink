@@ -7,8 +7,8 @@ const {Pool} = require('pg');
 const connectDB = async () => {
   try {
     const pool = new Pool({
-      host: 'localhost',
-      database: 'hemolink',
+      host: 'localhost', // PostgreSQL sunucusunun IP adresi 
+      database: 'postgres',
       user: 'postgres',
       password: 'a',
       port: 5432,
