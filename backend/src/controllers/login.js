@@ -38,8 +38,11 @@ const loginUser = async (req, res) => {
       user: { 
         id: user.id,
         name: user.name,
+        surname : user.surname,
+        age: user.age,
+        blood_type: user.blood_type,
         email: user.email,
-        type: userType
+        created_at: user.created_at,
       }
     });
 

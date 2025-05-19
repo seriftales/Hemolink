@@ -55,7 +55,7 @@ const ProfileScreen = ({ route, navigation }) => {
           <Info label="Yaş" value={user.age || '-'} />
           <Info label="Kan Grubu" value={user.blood_type || '-'} />
           <Info
-            label="Kayıt Tarihi"
+            label="Kayıt Tarihii"
             value={
               user.created_at
                 ? new Date(user.created_at).toLocaleDateString('tr-TR')

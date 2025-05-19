@@ -33,9 +33,7 @@ const DonorLoginScreen = ({ navigation }) => {
           <Text style={styles.backButtonText}>← Geri</Text>
         </TouchableOpacity>
 
-        {/* 🔺 Başlık */}
-        <Text style={styles.title}>Bağışçı Girişi</Text>
-
+       
         {/* 📥 Giriş Alanları */}
         <FormInput
           placeholder="Email"
@@ -76,7 +74,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 24,
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   backButton: {
     position: 'absolute',
@@ -93,7 +91,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: 'bold',
-    color: '#e74c3c',
+    color: '#e74c3a',
     textAlign: 'center',
     marginBottom: 32,
   },
