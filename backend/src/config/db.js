@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /*
     Bu dosya, PostgreSQL veritabanı bağlantısını yapılandırmak için kullanılır.
 */

@@ -47,8 +47,4 @@ const loginUser = async (req, res) => {
   }
 };
 
-const logOutUser = (req, res) => {
-  res.json({ message: 'Başarıyla çıkış yapıldı' });
-};
-
-module.exports = { loginUser, logOutUser };
+module.exports = { loginUser };

@@ -1,76 +1,80 @@
-// api.js
-const BASE_URL = 'http://192.168.98.184:3000'; // kendi IP ve portuna göre ayarla
+const BASE_URL = 'http://192.168.52.85:3000';
+// kendi IP ve portuna göre ayarla
 
-const loginReq = async (email, password) => {
-    try {
-      const response = await fetch(`${BASE_URL}/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-      
-      const data = await response.json();
-  
-      if (!response.ok) {
-        throw new Error(data.message || 'Giriş başarısız');
-      }
-  
-      return data; // { token, user }
-    
-    } catch (error) {
-      alert('Email veya Şifre yanlış tekrar deneyiniz!:', error.message);
-      throw error;
+export const loginReq = async (email, password) => {
+  try {
+    const response = await fetch(`${BASE_URL}/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Giriş başarısız');
     }
-  };
-  
-const logoutReq = async () => {
-    try {
-      const response = await fetch(`${BASE_URL}/logout`, {
-        method: 'POST',
-      });
-  
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('logoutUser API error:', error.message);
-      throw error;
+
+    return data; // { token, user }
+  } catch (error) {
+    alert('Email veya Şifre yanlış tekrar deneyiniz!\n' + error.message);
+    throw error;
+  }
+};
+
+export const registerReq = async (name, email, password) => {
+  try {
+    const response = await fetch(`${BASE_URL}/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, email, password }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Kayıt başarısız');
     }
-  };
 
-const registerReq = async (name, email, password) => {
-    console.log("registerReq çalıştı");
-    try {
-      const response = await fetch(`${BASE_URL}/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, email, password }),
-      });
-      console.log("registerReq çalıştı 2");
-      
-      const data  = await response.json(); 
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Kayıt başarısız');
-      }
-  
-      return data; // { token, user }
-    } catch (error) {
-      console.error('Kayıt işlemi sırasında bir hata oluştu:', error.message);
-      alert('Kayıt işlemi sırasında bir hata oluştu: ' + error.message);
-      throw error; // Hata yakalama
+    return data; // { token, user }
+  } catch (error) {
+    alert('Kayıt işlemi hatası:\n' + error.message);
+    throw error;
+  }
+};
+
+export const hospitalReq = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/hospital`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Hastane verisi alınamadı');
     }
-  };
-  
 
+    return data;
+  } catch (error) {
+    console.error('Hastane verisi alma hatası:', error.message);
+    return [];
+  }
+};
 
-
-
-  module.exports = {
-    loginReq,
-    logoutReq,
-    registerReq
-  };
+export const hospitalLoginReq = async (email, password) => {
+  try {
+    const response = await fetch(`${BASE_URL}/hospital-login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || 'Giriş başarısız');
+    return data;
+  } catch (error) {
+    alert('Hastane girişi hatası:\n' + error.message);
+    throw error;
+  }
+};

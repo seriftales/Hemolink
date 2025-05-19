@@ -1,5 +1,5 @@
 const express = require('express');
-const { loginUser, logOutUser } = require('../controllers/login.js');
+const { loginUser } = require('../controllers/login.js');
 const { registerUser } = require('../controllers/register.js');
 const { getPriorityRequest } = require('../controllers/priority.js');
 const { getActiveRequests, getDonorStatistics, getBloodTypeStatistics } = require('../controllers/statistics.js');
