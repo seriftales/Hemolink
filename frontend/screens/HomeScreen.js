@@ -1,12 +1,42 @@
 import React from 'react';
-import { View, Text, StyleSheet, ImageBackground, Image } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, Image, TouchableOpacity, Alert } from 'react-native';
 import Header from '../components/Header';
 import Button from '../components/Button';
+import { useAuth } from '../context/AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = ({ navigation, route }) => {
-  const user = route.params?.user;
-  console.log("🏠 HomeScreen gelen user:", user);
+  const { user } = useAuth();
+  const userFromRoute = route.params?.user;
+  console.log("🏠 HomeScreen gelen user:", userFromRoute);
 
+  const sendTestNotification = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/notifications/blood-request', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await AsyncStorage.getItem('userToken')}`
+        },
+        body: JSON.stringify({
+          hospitalId: 1, // Test için sabit bir hastane ID'si
+          bloodType: "A+", // Test için sabit bir kan grubu
+          requestId: 1 // Test için sabit bir talep ID'si
+        })
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        Alert.alert('Başarılı', 'Bildirim gönderildi!');
+      } else {
+        Alert.alert('Hata', data.message || 'Bildirim gönderilemedi');
+      }
+    } catch (error) {
+      console.error('Bildirim gönderme hatası:', error);
+      Alert.alert('Hata', 'Bildirim gönderilirken bir hata oluştu');
+    }
+  };
 
   return (
     <ImageBackground source={require('../assets/background.png')} style={styles.background}>
@@ -16,7 +46,7 @@ const HomeScreen = ({ navigation, route }) => {
         <View style={styles.content}>
           <Image source={require('../assets/blood-drop.png')} style={styles.image} />
           <Text style={styles.welcomeText}>
-            Hoş Geldiniz{user?.name ? `, ${user.name}` : ''}!
+            Hoş Geldiniz{userFromRoute?.name ? `, ${userFromRoute.name}` : ''}!
           </Text>
 
           <Button title="Bağış Yap" onPress={() => alert('Bağış yapıldı!')} />
@@ -28,8 +58,15 @@ const HomeScreen = ({ navigation, route }) => {
 
           <Button
             title="Profilim"
-            onPress={() => navigation.navigate('Profile', { user })}
+            onPress={() => navigation.navigate('Profile', { user: userFromRoute })}
           />
+
+          <TouchableOpacity 
+            style={styles.button}
+            onPress={sendTestNotification}
+          >
+            <Text style={styles.buttonText}>Test Bildirimi Gönder</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ImageBackground>
@@ -71,6 +108,18 @@ const styles = StyleSheet.create({
   },
   headerText: {
     color: '#e74c3c',
+  },
+  button: {
+    backgroundColor: '#e74c3c',
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

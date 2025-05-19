@@ -1,4 +1,5 @@
 const { connectDB } = require('../config/db');
+const axios = require('axios');
 
 // Kullanıcının bildirimlerini getir
 const getUserNotifications = async (req, res) => {
@@ -15,6 +16,23 @@ const getUserNotifications = async (req, res) => {
   } catch (error) {
     console.error('Bildirimler getirilirken hata:', error);
     res.status(500).json({ message: 'Bildirimler getirilirken bir hata oluştu' });
+  }
+};
+
+// Expo Push Notification gönder
+const sendPushNotification = async (pushToken, title, body) => {
+  try {
+    const message = {
+      to: pushToken,
+      sound: 'default',
+      title: title,
+      body: body,
+      data: { someData: 'goes here' },
+    };
+
+    await axios.post('https://exp.host/--/api/v2/push/send', message);
+  } catch (error) {
+    console.error('Push notification gönderme hatası:', error);
   }
 };
 
@@ -38,7 +56,7 @@ const sendBloodRequestNotification = async (req, res) => {
 
     // Aynı kan grubuna sahip kullanıcıları bul
     const usersResult = await db.query(
-      'SELECT id FROM users WHERE blood_type = $1',
+      'SELECT id, push_token FROM users WHERE blood_type = $1 AND push_token IS NOT NULL',
       [bloodType]
     );
 
@@ -48,6 +66,7 @@ const sendBloodRequestNotification = async (req, res) => {
 
     // Her kullanıcıya bildirim gönder
     for (const user of usersResult.rows) {
+      // Veritabanına kaydet
       await db.query(
         `INSERT INTO notifications 
         (recipient_type, recipient_id, title, message, type, related_entity_type, related_entity_id) 
@@ -62,6 +81,15 @@ const sendBloodRequestNotification = async (req, res) => {
           requestId
         ]
       );
+
+      // Push notification gönder
+      if (user.push_token) {
+        await sendPushNotification(
+          user.push_token,
+          'Acil Kan İhtiyacı',
+          `${hospitalName} hastanesinde ${bloodType} kan grubuna acil ihtiyaç var.`
+        );
+      }
     }
 
     res.json({ 
@@ -134,10 +162,67 @@ const getUnreadNotificationCount = async (req, res) => {
   }
 };
 
+// Test bildirimi gönder
+const sendTestNotification = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const db = await connectDB();
+
+    // Kullanıcıyı bul
+    const userResult = await db.query(
+      'SELECT * FROM users WHERE id = $1',
+      [userId]
+    );
+
+    if (!userResult.rows[0]) {
+      return res.status(404).json({ message: 'Kullanıcı bulunamadı' });
+    }
+
+    const user = userResult.rows[0];
+
+    // Bildirimi veritabanına kaydet
+    await db.query(
+      `INSERT INTO notifications 
+      (recipient_type, recipient_id, title, message, type) 
+      VALUES ($1, $2, $3, $4, $5)`,
+      [
+        'user',
+        userId,
+        'Test Bildirimi',
+        'Bu bir test bildirimidir.',
+        'system'
+      ]
+    );
+
+    // Push notification gönder
+    if (user.push_token) {
+      await sendPushNotification(
+        user.push_token,
+        'Test Bildirimi',
+        'Bu bir test bildirimidir.'
+      );
+    }
+
+    res.json({ 
+      message: 'Test bildirimi başarıyla gönderildi',
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email
+      }
+    });
+
+  } catch (error) {
+    console.error('Test bildirimi gönderme hatası:', error);
+    res.status(500).json({ message: 'Test bildirimi gönderilirken bir hata oluştu' });
+  }
+};
+
 module.exports = {
   getUserNotifications,
   sendBloodRequestNotification,
   markNotificationAsRead,
   markAllNotificationsAsRead,
-  getUnreadNotificationCount
+  getUnreadNotificationCount,
+  sendTestNotification
 }; 

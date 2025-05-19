@@ -3,13 +3,14 @@ const { loginUser } = require('../controllers/login.js');
 const { registerUser } = require('../controllers/register.js');
 const { getPriorityRequest } = require('../controllers/priority.js');
 const { getActiveRequests, getDonorStatistics, getBloodTypeStatistics } = require('../controllers/statistics.js');
-const { getHospitals } = require('../utils/hospital.js');
+const { getHospitals, getNearbyHospitals } = require('../controllers/hospital.js');
 const { 
   getUserNotifications, 
   markNotificationAsRead, 
   markAllNotificationsAsRead, 
   getUnreadNotificationCount,
-  sendBloodRequestNotification 
+  sendBloodRequestNotification,
+  sendTestNotification 
 } = require('../controllers/notifications.js');
 const auth = require('../middlewares/auth.js');
 
@@ -19,7 +20,8 @@ const router = express.Router();
 // Auth routes
 router.post('/login', loginUser);
 router.post('/register', registerUser);
-router.get('/hospital',getHospitals);
+router.get('/hospital', getHospitals);
+router.get('/nearby-centers', getNearbyHospitals);
 
 // Protected routes
 router.get('/priority', auth, getPriorityRequest);
@@ -35,5 +37,6 @@ router.get('/notifications/unread-count', auth, getUnreadNotificationCount);
 router.put('/notifications/:notificationId/read', auth, markNotificationAsRead);
 router.put('/notifications/read-all', auth, markAllNotificationsAsRead);
 router.post('/notifications/blood-request', auth, sendBloodRequestNotification);
+router.post('/notifications/test/:userId', auth, sendTestNotification);
 
 module.exports = router;

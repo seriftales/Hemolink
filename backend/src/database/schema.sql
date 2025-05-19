@@ -1,18 +1,13 @@
--- Veritabanını oluştur
-CREATE DATABASE hemolink;
-
--- Veritabanına bağlan
-\c hemolink;
-
 -- Users tablosu
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    surname VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    surname VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(100) NOT NULL,
     age INTEGER NOT NULL,
-    blood_type VARCHAR(3) NOT NULL,
+    blood_type VARCHAR(5) NOT NULL,
+    push_token TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT valid_blood_type CHECK (blood_type IN ('A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', '0+', '0-')),
@@ -20,24 +15,24 @@ CREATE TABLE users (
 );
 
 -- Hastaneler tablosu
-CREATE TABLE hospitals (
+CREATE TABLE IF NOT EXISTS hospitals (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(100) NOT NULL,
     address TEXT NOT NULL,
-    city VARCHAR(100) NOT NULL,
-    phone VARCHAR(20),
-    email VARCHAR(255) UNIQUE,
-    latitude DOUBLE PRECISION NOT NULL,
-    longitude DOUBLE PRECISION NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    latitude DECIMAL(10, 8) NOT NULL,
+    longitude DECIMAL(11, 8) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Kan bağış talepleri tablosu
-CREATE TABLE blood_requests (
+CREATE TABLE IF NOT EXISTS blood_requests (
     id SERIAL PRIMARY KEY,
     hospital_id INTEGER REFERENCES hospitals(id),
-    blood_type VARCHAR(3) NOT NULL,
+    blood_type VARCHAR(5) NOT NULL,
     units_needed INTEGER NOT NULL,
     urgency_level VARCHAR(20) NOT NULL,
     status VARCHAR(20) DEFAULT 'active',
@@ -48,7 +43,7 @@ CREATE TABLE blood_requests (
 );
 
 -- Bağışçı-hastane eşleştirme tablosu
-CREATE TABLE donor_hospital_matches (
+CREATE TABLE IF NOT EXISTS donor_hospital_matches (
     id SERIAL PRIMARY KEY,
     donor_id INTEGER REFERENCES users(id),
     hospital_id INTEGER REFERENCES hospitals(id),
@@ -60,18 +55,11 @@ CREATE TABLE donor_hospital_matches (
 );
 
 -- Bildirimler tablosu
-CREATE TABLE notifications (
+CREATE TABLE IF NOT EXISTS notifications (
     id SERIAL PRIMARY KEY,
-    recipient_type VARCHAR(10) NOT NULL, -- 'user' veya 'hospital'
-    recipient_id INTEGER NOT NULL, -- users.id veya hospitals.id
-    title VARCHAR(255) NOT NULL,
+    user_id INTEGER REFERENCES users(id),
+    hospital_id INTEGER REFERENCES hospitals(id),
     message TEXT NOT NULL,
-    type VARCHAR(50) NOT NULL, -- 'blood_request', 'match', 'system', 'urgent' vb.
-    is_read BOOLEAN DEFAULT FALSE,
-    related_entity_type VARCHAR(20), -- 'blood_request', 'match' vb.
-    related_entity_id INTEGER, -- ilgili tablonun id'si
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT valid_recipient_type CHECK (recipient_type IN ('user', 'hospital')),
-    CONSTRAINT valid_notification_type CHECK (type IN ('blood_request', 'match', 'system', 'urgent', 'reminder', 'update'))
+    is_read BOOLEAN DEFAULT false,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ); 

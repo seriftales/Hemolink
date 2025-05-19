@@ -1,5 +1,4 @@
 // login.js
-const { connectDB } = require('../config/db');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET, JWT_EXPIRES_IN } = require('../config/jwt');
 
@@ -7,15 +6,18 @@ const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const db = await connectDB();
+    const pool = req.app.locals.pool;
+    if (!pool) {
+      throw new Error('Veritabanı bağlantısı bulunamadı');
+    }
     
     // Önce users tablosunda ara
-    let result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+    let result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     let userType = 'user';
      
     // Eğer users tablosunda bulunamazsa, hospitals tablosunda ara
     if (!result.rows[0]) {
-      result = await db.query('SELECT * FROM hospitals WHERE email = $1', [email]);
+      result = await pool.query('SELECT * FROM hospitals WHERE email = $1', [email]);
       userType = 'hospital';
     }
 
@@ -46,7 +48,7 @@ const loginUser = async (req, res) => {
 
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ message: 'Sunucu hatası' });
+    res.status(500).json({ message: error.message || 'Sunucu hatası' });
   }
 };
 

@@ -7,8 +7,8 @@ const {Pool} = require('pg');
 const connectDB = async () => {
   try {
     const pool = new Pool({
-      host: 'localhost', // PostgreSQL sunucusunun IP adresi 
-      database: 'hemolink',
+      host: 'localhost',
+      database: 'hemolink', // Mevcut veritabanını kullan
       user: 'postgres',
       password: 'a',
       port: 5432,
@@ -20,7 +20,7 @@ const connectDB = async () => {
     return pool;
   } catch (error) {
     console.error('Veritabanı bağlantı hatası:', error);
-    throw error; // Bağlantı hatası durumunda hata fırlat
+    throw error;
   }
 };
 

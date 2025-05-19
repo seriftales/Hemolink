@@ -26,37 +26,40 @@ const registerUser = async (req, res) => {
   }
 
   try {
-    const db = await connectDB();
-    const existingUser = await db.query('SELECT * FROM users WHERE email = $1', [email]);
-
-    if (existingUser.rows.length > 0) {
-      return res.status(400).json({ message: 'Email zaten kayıtlı' });
+    const pool = req.app.locals.pool;
+    if (!pool) {
+      throw new Error('Veritabanı bağlantısı bulunamadı');
     }
 
-    const newUser = await db.query(
+    // Email kontrolü
+    const emailCheck = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    if (emailCheck.rows[0]) {
+      return res.status(400).json({ message: 'Bu email adresi zaten kullanılıyor' });
+    }
+
+    // Yeni kullanıcı oluştur
+    const result = await pool.query(
       'INSERT INTO users (name, surname, email, password, age, blood_type) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
       [name, surname, email, password, age, bloodType]
     );
 
-    const user = newUser.rows[0];
-    const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+    const newUser = result.rows[0];
 
     res.status(201).json({
       message: 'Kayıt başarılı',
-      token,
       user: {
-        id: user.id,
-        name: user.name,
-        surname: user.surname,
-        email: user.email,
-        age: user.age,
-        bloodType: user.blood_type
+        id: newUser.id,
+        name: newUser.name,
+        surname: newUser.surname,
+        email: newUser.email,
+        age: newUser.age,
+        blood_type: newUser.blood_type
       }
     });
 
   } catch (error) {
     console.error('Register error:', error);
-    res.status(500).json({ message: 'Sunucu hatası' });
+    res.status(500).json({ message: error.message || 'Kayıt işlemi başarısız' });
   }
 };
 
