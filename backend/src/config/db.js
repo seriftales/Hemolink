@@ -8,7 +8,7 @@ const connectDB = async () => {
   try {
     const pool = new Pool({
       host: 'localhost', // PostgreSQL sunucusunun IP adresi 
-      database: 'postgres',
+      database: 'hemolink',
       user: 'postgres',
       password: 'a',
       port: 5432,

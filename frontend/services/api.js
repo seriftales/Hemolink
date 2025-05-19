@@ -1,4 +1,4 @@
-const BASE_URL = 'http://192.168.64.254:3000';
+const BASE_URL = 'http://192.168.98.7:3000';
 // sunucu IP adresi 
 
 export const loginReq = async (email, password) => {
