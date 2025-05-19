@@ -12,7 +12,7 @@ const loginUser = async (req, res) => {
     // Önce users tablosunda ara
     let result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
     let userType = 'user';
-    
+     
     // Eğer users tablosunda bulunamazsa, hospitals tablosunda ara
     if (!result.rows[0]) {
       result = await db.query('SELECT * FROM hospitals WHERE email = $1', [email]);

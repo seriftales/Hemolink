@@ -50,7 +50,7 @@ const ProfileScreen = ({ route, navigation }) => {
 
         {/* 👤 Kullanıcı Bilgileri */}
         <View style={styles.card}>
-          <Info label="Ad Soyad" value={`${user.name} ${user.surname || ''}`} />
+          <Info label="Ad Soyad" value={`${user.name}  ${user.surname || ''}`} />
           <Info label="Email" value={user.email} />
           <Info label="Yaş" value={user.age || '-'} />
           <Info label="Kan Grubu" value={user.blood_type || '-'} />

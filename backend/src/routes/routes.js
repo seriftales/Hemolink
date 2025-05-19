@@ -3,6 +3,7 @@ const { loginUser } = require('../controllers/login.js');
 const { registerUser } = require('../controllers/register.js');
 const { getPriorityRequest } = require('../controllers/priority.js');
 const { getActiveRequests, getDonorStatistics, getBloodTypeStatistics } = require('../controllers/statistics.js');
+const { getHospitals } = require('../utils/hospital.js');
 const { 
   getUserNotifications, 
   markNotificationAsRead, 
@@ -12,12 +13,13 @@ const {
 } = require('../controllers/notifications.js');
 const auth = require('../middlewares/auth.js');
 
+
 const router = express.Router();
 
 // Auth routes
 router.post('/login', loginUser);
-router.post('/logout', logOutUser);
 router.post('/register', registerUser);
+router.get('/hospital',getHospitals);
 
 // Protected routes
 router.get('/priority', auth, getPriorityRequest);

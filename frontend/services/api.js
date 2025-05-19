@@ -1,5 +1,5 @@
-const BASE_URL = 'http://192.168.52.85:3000';
-// kendi IP ve portuna göre ayarla
+const BASE_URL = 'http://192.168.64.254:3000';
+// sunucu IP adresi 
 
 export const loginReq = async (email, password) => {
   try {
