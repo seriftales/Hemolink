@@ -1,5 +1,6 @@
-const { connectDB } = require('../config/db.js');
+const { connectDB } = require('../config/db');
 const jwt = require('jsonwebtoken');
+const { JWT_SECRET, JWT_EXPIRES_IN } = require('../config/jwt');
 
 const BLOOD_TYPES = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', '0+', '0-'];
 
@@ -38,8 +39,7 @@ const registerUser = async (req, res) => {
     );
 
     const user = newUser.rows[0];
-
-    const token = jwt.sign({ id: user.id }, 'gizli_anahtar', { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 
     res.status(201).json({
       message: 'Kayıt başarılı',
@@ -51,12 +51,12 @@ const registerUser = async (req, res) => {
         email: user.email,
         age: user.age,
         bloodType: user.blood_type
-      },
+      }
     });
 
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('Register error:', error);
+    res.status(500).json({ message: 'Sunucu hatası' });
   }
 };
 

@@ -1,14 +1,28 @@
 const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = require('../config/jwt');
 
-module.exports = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+const auth = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Token gerekli' });
+  }
 
-  if (!token) return res.status(401).json({ message: 'Token gerekli' });
+  const token = authHeader.split(' ')[1];
+  console.log('Received token:', token);
+  console.log('Using JWT_SECRET:', JWT_SECRET);
 
-  jwt.verify(token, 'supersecretkey', (err, user) => {
-    if (err) return res.status(403).json({ message: 'Geçersiz token' });
-    req.user = user;
+  jwt.verify(token, JWT_SECRET, (err, decoded) => {
+    if (err) {
+      console.error('JWT Error:', err.message);
+      console.error('Error details:', err);
+      return res.status(403).json({ message: 'Geçersiz token' });
+    }
+    
+    console.log('Token decoded successfully:', decoded);
+    req.user = decoded;
     next();
   });
 };
+
+module.exports = auth;

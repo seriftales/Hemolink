@@ -1,47 +1,54 @@
 // login.js
-const {connectDB} = require('../config/db.js');
+const { connectDB } = require('../config/db');
 const jwt = require('jsonwebtoken');
+const { JWT_SECRET, JWT_EXPIRES_IN } = require('../config/jwt');
 
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
-  console.log("login user")
-  console.log("email", email)
+
   try {
-    const query = 'SELECT * FROM users WHERE email = $1'; 
-    const data = await connectDB()
-    const result = await data.query(query, [email]);
-    console.log('Result:', result.rows[0]);
-
-    if (!result.rows) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+    const db = await connectDB();
+    
+    // Önce users tablosunda ara
+    let result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+    let userType = 'user';
+    
+    // Eğer users tablosunda bulunamazsa, hospitals tablosunda ara
+    if (!result.rows[0]) {
+      result = await db.query('SELECT * FROM hospitals WHERE email = $1', [email]);
+      userType = 'hospital';
     }
 
-
-
-    if (result.rows[0].password !== password) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+    if (!result.rows[0]) {
+      return res.status(401).json({ message: 'Geçersiz email veya şifre' });
     }
-
-    console.log("login user")
 
     const user = result.rows[0];
 
-    // const isMatch = await bcrypt.compare(password, user.password);
-    // if (!isMatch) {
-    //   return res.status(401).json({ message: 'Invalid email or password' });
-    // }
+    if (user.password !== password) {
+      return res.status(401).json({ message: 'Geçersiz email veya şifre' });
+    }
 
-    const token = jwt.sign({ id: user.id }, `cokgizli`, { expiresIn: '1h' });
-    res.json({ token, user: { id: user.id, email: user.email } });
+    const token = jwt.sign({ id: user.id, type: userType }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+    
+    res.json({ 
+      token,
+      user: { 
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        type: userType
+      }
+    });
 
   } catch (error) {
-    console.error('Error logging in user:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    console.error('Login error:', error);
+    res.status(500).json({ message: 'Sunucu hatası' });
   }
 };
 
 const logOutUser = (req, res) => {
-  res.json({ message: 'User logged out successfully' });
+  res.json({ message: 'Başarıyla çıkış yapıldı' });
 };
 
 module.exports = { loginUser, logOutUser };

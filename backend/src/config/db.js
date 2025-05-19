@@ -10,7 +10,7 @@ const connectDB = async () => {
   try {
     const pool = new Pool({
       host: 'localhost',
-      database: 'postgres',
+      database: 'hemolink',
       user: 'postgres',
       password: 'a',
       port: 5432,
@@ -26,7 +26,5 @@ const connectDB = async () => {
   }
 };
 
-
-
-module.exports = {connectDB} ; 
+module.exports = {connectDB}; 
 
