@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, Alert,
-  ImageBackground // 📌 Picker eklendi!
+  ImageBackground
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker'; // ✅ doğru import
+import { Picker } from '@react-native-picker/picker';
 import FormInput from '../components/FormInput';
 import { registerReq } from '../services/api';
 
@@ -22,20 +22,13 @@ const RegisterScreen = ({ navigation }) => {
     }
 
     try {
-      const data = await registerReq({
-        name,
-        surname,
-        email,
-        password,
-        age: parseInt(age),
-        blood_type: bloodType
-      });
+      const data = await registerReq(name, surname, email, password, age, bloodType);
       console.log('Register data:', data);
       Alert.alert('Kayıt Başarılı', 'Lütfen giriş yapın.');
-      navigation.navigate('Login');
+      navigation.navigate('DonorLogin');
     } catch (error) {
       console.log('Register error:', error);
-      Alert.alert('Kayıt Başarısız', 'Lütfen bilgilerinizi kontrol edin.');
+      Alert.alert('Kayıt Başarısız', error.message || 'Lütfen bilgilerinizi kontrol edin.');
     }
   };
 
@@ -53,7 +46,7 @@ const RegisterScreen = ({ navigation }) => {
         <FormInput placeholder="Şifre" value={password} onChangeText={setPassword} secureTextEntry />
         <FormInput placeholder="Yaş" value={age} onChangeText={setAge} keyboardType="numeric" />
 
-        {/* 🔻 Kan Grubu Seçimi */}
+        {/* Kan Grubu Seçimi */}
         <View style={styles.pickerContainer}>
           <Text style={styles.pickerLabel}>Kan Grubu:</Text>
           <Picker
