@@ -1,5 +1,5 @@
 const express = require('express');
-const { loginUser } = require('../controllers/login.js');
+const { loginUser, loginHospital } = require('../controllers/login');
 const { registerUser } = require('../controllers/register.js');
 const { getPriorityRequest } = require('../controllers/priority.js');
 const { getActiveRequests, getDonorStatistics, getBloodTypeStatistics } = require('../controllers/statistics.js');
@@ -20,6 +20,7 @@ const router = express.Router();
 // Auth routes
 router.post('/login', loginUser);
 router.post('/register', registerUser);
+router.post('/hospital-login', loginHospital);
 router.get('/hospital', getHospitals);
 router.get('/nearby-centers', getNearbyHospitals);
 

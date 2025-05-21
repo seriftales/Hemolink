@@ -52,4 +52,47 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { loginUser };
+const loginHospital = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const pool = req.app.locals.pool;
+    if (!pool) {
+      throw new Error('Veritabanı bağlantısı bulunamadı');
+    }
+
+    const result = await pool.query('SELECT * FROM hospitals WHERE email = $1', [email]);
+    const hospital = result.rows[0];
+
+    if (!hospital) {
+      return res.status(401).json({ message: 'Geçersiz email veya şifre' });
+    }
+
+    if (hospital.password !== password) {
+      return res.status(401).json({ message: 'Geçersiz email veya şifre' });
+    }
+
+    const token = jwt.sign({ id: hospital.id, type: 'hospital' }, JWT_SECRET, {
+      expiresIn: JWT_EXPIRES_IN,
+    });
+
+    res.json({
+      token,
+      user: {
+        id: hospital.id,
+        name: hospital.name,
+        email: hospital.email,
+        address: hospital.address,
+        phone: hospital.phone,
+        latitude: hospital.latitude,
+        longitude: hospital.longitude,
+        created_at: hospital.created_at,
+      },
+    });
+  } catch (error) {
+    console.error('Hospital login error:', error);
+    res.status(500).json({ message: error.message || 'Sunucu hatası' });
+  }
+};
+
+module.exports = { loginUser, loginHospital };
