@@ -49,7 +49,8 @@ const HomeScreen = ({ navigation, route }) => {
             Hoş Geldiniz{userFromRoute?.name ? `, ${userFromRoute.name}` : ''}!
           </Text>
 
-          <Button title="Bağış Yap" onPress={() => alert('Bağış yapıldı!')} />
+          <Button title="Bağış Yap" onPress={() => navigation.navigate('BloodRequests')}/>
+
 
           <Button
             title="En Yakın Kan Bağış Merkezlerini Gör"

@@ -32,11 +32,7 @@ const HospitalLoginScreen = ({ navigation }) => {
       resizeMode="cover"
     >
       <View style={styles.container}>
-        {/* 🔙 Geri Butonu */}
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Text style={styles.backButtonText}>← Geri</Text>
-        </TouchableOpacity>
-
+        
         <FormInput
           placeholder="Email"
           value={email}
@@ -71,19 +67,6 @@ const styles = StyleSheet.create({
     padding: 24,
     paddingTop: 100, // 👈 BU satırı ekle! (40 = hafif kayma)
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  
-  backButton: {
-    position: 'absolute',
-    top: 50,
-    left: 20,
-    padding: 10,
-    zIndex: 10,
-  },
-  backButtonText: {
-    color: '#e74c3c',
-    fontSize: 18,
-    fontWeight: 'bold',
   },
   title: {
     fontSize: 26,

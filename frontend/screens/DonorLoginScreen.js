@@ -28,12 +28,7 @@ const DonorLoginScreen = ({ navigation }) => {
       resizeMode="cover"
     >
       <View style={styles.container}>
-        {/* 🔙 Geri Butonu */}
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Text style={styles.backButtonText}>← Geri</Text>
-        </TouchableOpacity>
-
-       
+      
         {/* 📥 Giriş Alanları */}
         <FormInput
           placeholder="Email"
@@ -75,18 +70,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  backButton: {
-    position: 'absolute',
-    top: 50,
-    left: 20,
-    padding: 10,
-    zIndex: 10,
-  },
-  backButtonText: {
-    color: '#e74c3c',
-    fontSize: 18,
-    fontWeight: 'bold',
   },
   title: {
     fontSize: 26,

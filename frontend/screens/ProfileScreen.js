@@ -1,3 +1,5 @@
+// screens/ProfileScreen.js
+
 import React from 'react';
 import {
   View,
@@ -7,21 +9,17 @@ import {
   ScrollView,
 } from 'react-native';
 
-// Sahte bağış geçmişi verisi (backend hazır olana kadar)
+// Mock veri: Bağış geçmişi
 const mockDonations = [
   {
     id: 1,
     hospital: 'KTÜ Kan Merkezi',
     date: '2024-12-10',
-    units: 1,
-    status: 'Tamamlandı',
   },
   {
     id: 2,
     hospital: 'Trabzon Devlet Hastanesi',
     date: '2024-08-23',
-    units: 2,
-    status: 'Bekliyor',
   },
 ];
 
@@ -50,12 +48,12 @@ const ProfileScreen = ({ route, navigation }) => {
 
         {/* 👤 Kullanıcı Bilgileri */}
         <View style={styles.card}>
-          <Info label="Ad Soyad" value={`${user.name}  ${user.surname || ''}`} />
+          <Info label="Ad Soyad" value={`${user.name} ${user.surname || ''}`} />
           <Info label="Email" value={user.email} />
           <Info label="Yaş" value={user.age || '-'} />
           <Info label="Kan Grubu" value={user.blood_type || '-'} />
           <Info
-            label="Kayıt Tarihii"
+            label="Kayıt Tarihi"
             value={
               user.created_at
                 ? new Date(user.created_at).toLocaleDateString('tr-TR')
@@ -67,17 +65,18 @@ const ProfileScreen = ({ route, navigation }) => {
         {/* 🩸 Bağış Geçmişi */}
         <Text style={styles.subHeader}>Bağış Geçmişi</Text>
         {mockDonations.length > 0 ? (
-          mockDonations.map((donation) => (
-            <View key={donation.id} style={styles.donationCard}>
-              <Text style={styles.donationTitle}>{donation.hospital}</Text>
-              <Text style={styles.donationInfo}>
-                Tarih: {donation.date} | Ünite: {donation.units}
-              </Text>
-              <Text style={styles.donationStatus}>
-                Durum: {donation.status}
-              </Text>
+          <View style={styles.table}>
+            <View style={styles.tableHeader}>
+              <Text style={styles.tableHeaderText}>Tarih</Text>
+              <Text style={styles.tableHeaderText}>Hastane</Text>
             </View>
-          ))
+            {mockDonations.map((donation) => (
+              <View key={donation.id} style={styles.tableRow}>
+                <Text style={styles.tableCell}>{donation.date}</Text>
+                <Text style={styles.tableCell}>{donation.hospital}</Text>
+              </View>
+            ))}
+          </View>
         ) : (
           <Text style={styles.noData}>Henüz bağış yapılmamış.</Text>
         )}
@@ -118,10 +117,6 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 20,
     borderRadius: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
     elevation: 5,
     marginBottom: 30,
   },
@@ -141,29 +136,34 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginBottom: 10,
   },
-  donationCard: {
-    backgroundColor: '#fefefe',
+  table: {
     width: '100%',
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 10,
-    borderLeftWidth: 4,
-    borderLeftColor: '#e74c3c',
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    overflow: 'hidden',
+    marginBottom: 24,
   },
-  donationTitle: {
-    fontSize: 16,
+  tableHeader: {
+    flexDirection: 'row',
+    backgroundColor: '#e74c3c',
+    padding: 12,
+  },
+  tableHeaderText: {
+    flex: 1,
+    color: '#fff',
     fontWeight: 'bold',
-    color: '#e74c3c',
+    fontSize: 16,
   },
-  donationInfo: {
-    fontSize: 14,
-    color: '#555',
+  tableRow: {
+    flexDirection: 'row',
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
   },
-  donationStatus: {
-    fontSize: 14,
-    fontStyle: 'italic',
-    color: '#777',
-    marginTop: 4,
+  tableCell: {
+    flex: 1,
+    fontSize: 15,
+    color: '#333',
   },
   noData: {
     fontSize: 14,

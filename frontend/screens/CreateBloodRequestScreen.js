@@ -8,7 +8,7 @@ import {
   Alert
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import FormInput from '../components/FormInput';
+
 
 const CreateBloodRequestScreen = ({ route, navigation }) => {
   const hospital = route.params?.hospital;
