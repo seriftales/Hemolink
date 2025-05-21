@@ -10,6 +10,7 @@ import RegisterScreen from '../screens/RegisterScreen';
 import HomeScreen from '../screens/HomeScreen';
 import NearbyCentersScreen from '../screens/NearbyCentersScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import HospitalHomeScreen from '../screens/HospitalHomeScreen';
 
 const Stack = createStackNavigator();
 
@@ -18,6 +19,7 @@ const AppNavigator = () => {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="LoginSelection" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="LoginSelection" component={LoginSelectionScreen} />
+        <Stack.Screen name="HospitalHome" component={HospitalHomeScreen} />
         <Stack.Screen name="DonorLogin" component={DonorLoginScreen} />
         <Stack.Screen name="HospitalLogin" component={HospitalLoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />

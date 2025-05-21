@@ -8,6 +8,7 @@ import RegisterScreen from './screens/RegisterScreen';
 import HomeScreen from './screens/HomeScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import NearbyCentersScreen from './screens/NearbyCentersScreen';
+import HospitalHomeScreen from './screens/HospitalHomeScreen';
 import { AuthProvider } from './context/AuthContext';
 
 const Stack = createNativeStackNavigator();
@@ -24,6 +25,7 @@ export default function App() {
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen name="NearbyCenters" component={NearbyCentersScreen} />
+          <Stack.Screen name="HospitalHome" component={HospitalHomeScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </AuthProvider>

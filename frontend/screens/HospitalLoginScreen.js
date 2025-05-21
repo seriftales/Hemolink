@@ -18,7 +18,7 @@ const HospitalLoginScreen = ({ navigation }) => {
     try {
       const data = await hospitalLoginReq(email, password);
       console.log('Hospital login:', data);
-      navigation.navigate('Home');
+      navigation.navigate('HospitalHome', { hospital: data.user });
     } catch (error) {
       console.log('Hospital login error:', error);
       Alert.alert('Giriş Başarısız', 'Bilgilerinizi kontrol edin.');

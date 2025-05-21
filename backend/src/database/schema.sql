@@ -33,7 +33,6 @@ CREATE TABLE IF NOT EXISTS blood_requests (
     id SERIAL PRIMARY KEY,
     hospital_id INTEGER REFERENCES hospitals(id),
     blood_type VARCHAR(5) NOT NULL,
-    units_needed INTEGER NOT NULL,
     urgency_level VARCHAR(20) NOT NULL,
     status VARCHAR(20) DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
