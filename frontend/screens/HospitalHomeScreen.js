@@ -5,40 +5,43 @@ const HospitalHomeScreen = ({ route, navigation }) => {
   const hospital = route.params?.hospital;
 
   const handleCreateBloodRequest = () => {
-    // İstek oluşturma fonksiyonu (ileride API eklenecek)
-    alert('Kan talebi oluşturuldu!');
+    navigation.navigate('CreateBloodRequest', { hospital });
+  };
+
+  const handleViewRequests = () => {
+    navigation.navigate('HospitalRequests');
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>🏥 Hastane Paneli</Text>
+      <Text style={styles.header}>🏥 Hastane Bilgileri</Text>
 
       <View style={styles.card}>
-        <Text style={styles.label}>Hastane Adı:</Text>
-        <Text style={styles.value}>{hospital?.name || '-'}</Text>
+        <Text style={styles.label}>Ad:</Text>
+        <Text style={styles.value}>{hospital?.name || '---'}</Text>
 
         <Text style={styles.label}>Email:</Text>
-        <Text style={styles.value}>{hospital?.email || '-'}</Text>
-
-        <Text style={styles.label}>Telefon:</Text>
-        <Text style={styles.value}>{hospital?.phone || '-'}</Text>
+        <Text style={styles.value}>{hospital?.email || '---'}</Text>
 
         <Text style={styles.label}>Adres:</Text>
-        <Text style={styles.value}>{hospital?.address || '-'}</Text>
+        <Text style={styles.value}>{hospital?.address || '---'}</Text>
 
-        <Text style={styles.label}>Konum (Lat, Long):</Text>
-        <Text style={styles.value}>
-          {hospital?.latitude}, {hospital?.longitude}
-        </Text>
+        <Text style={styles.label}>Telefon:</Text>
+        <Text style={styles.value}>{hospital?.phone || '---'}</Text>
 
-        <Text style={styles.label}>Kayıt Tarihi:</Text>
+        <Text style={styles.label}>Konum:</Text>
         <Text style={styles.value}>
-          {hospital?.created_at ? new Date(hospital.created_at).toLocaleString() : '-'}
+          Enlem: {hospital?.latitude || '---'} | Boylam: {hospital?.longitude || '---'}
         </Text>
       </View>
 
-      <TouchableOpacity style={styles.button} onPress={handleCreateBloodRequest}>
-        <Text style={styles.buttonText}>Kan Talebi Oluştur</Text>
+      {/* ⬜ Aynı Stilde Butonlar */}
+      <TouchableOpacity style={styles.buttonSecondary} onPress={handleCreateBloodRequest}>
+        <Text style={styles.buttonSecondaryText}>🩸 Kan Talebi Oluştur</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.buttonSecondary} onPress={handleViewRequests}>
+        <Text style={styles.buttonSecondaryText}>📋 Talepleri Görüntüle</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -52,39 +55,40 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   header: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#e74c3c',
     marginBottom: 20,
   },
   card: {
     width: '100%',
-    backgroundColor: '#f8f8f8',
+    backgroundColor: '#f9f9f9',
     padding: 20,
     borderRadius: 12,
     marginBottom: 30,
     elevation: 3,
   },
   label: {
-    fontSize: 15,
-    color: '#888',
+    fontSize: 16,
+    color: '#777',
     marginTop: 12,
   },
   value: {
-    fontSize: 17,
+    fontSize: 18,
     fontWeight: '600',
     color: '#333',
   },
-  button: {
-    backgroundColor: '#e74c3c',
+  buttonSecondary: {
+    borderColor: '#e74c3c',
+    borderWidth: 2,
     padding: 15,
     borderRadius: 10,
     width: '100%',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 12,
   },
-  buttonText: {
-    color: '#fff',
+  buttonSecondaryText: {
+    color: '#e74c3c',
     fontWeight: 'bold',
     fontSize: 16,
   },

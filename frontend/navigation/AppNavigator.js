@@ -11,6 +11,8 @@ import HomeScreen from '../screens/HomeScreen';
 import NearbyCentersScreen from '../screens/NearbyCentersScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import HospitalHomeScreen from '../screens/HospitalHomeScreen';
+import HospitalRequestsScreen from './screens/HospitalRequestsScreen';
+import CreateBloodRequestScreen from './screens/CreateBloodRequestScreen';
 
 const Stack = createStackNavigator();
 
@@ -24,8 +26,10 @@ const AppNavigator = () => {
         <Stack.Screen name="HospitalLogin" component={HospitalLoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="CreateBloodRequest" component={CreateBloodRequestScreen} />
         <Stack.Screen name="NearbyCenters" component={NearbyCentersScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="HospitalRequests" component={HospitalRequestsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
