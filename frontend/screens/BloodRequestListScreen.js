@@ -1,55 +1,26 @@
-// screens/BloodRequestListScreen.js
-
-import React, { useState } from 'react';
+import { fetchRequests } from '../services/api'; 
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   FlatList,
   StyleSheet,
   TouchableOpacity,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
-// 🔻 Sahte kan talepleri (backend hazır olana kadar)
-const mockRequests = [
-  {
-    id: 1,
-    hospital: 'KTÜ Kan Merkezi',
-    blood_type: 'A+',
-    urgency: 'high',
-    date: '2025-05-10',
-    latitude: 40.986,
-    longitude: 39.718,
-  },
-  {
-    id: 2,
-    hospital: 'Trabzon Devlet',
-    blood_type: '0-',
-    urgency: 'critical',
-    date: '2025-05-17',
-    latitude: 40.984,
-    longitude: 39.723,
-  },
-  {
-    id: 3,
-    hospital: 'Ankara Şehir Hastanesi',
-    blood_type: 'B+',
-    urgency: 'medium',
-    date: '2025-05-15',
-    latitude: 39.925,
-    longitude: 32.8369,
-  },
-];
+// Yeni: updateRequestStatus fonksiyonunu import ettim
+import { updateRequestStatus } from '../services/api';
 
-// Kullanıcının sahte konumu (gerçek uygulamada geolocation alınmalı)
 const userLocation = {
   latitude: 40.987,
   longitude: 39.720,
 };
 
-// Mesafeyi hesaplayan fonksiyon (Haversine)
 const getDistance = (lat1, lon1, lat2, lon2) => {
-  const R = 6371; // km
+  const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
@@ -61,44 +32,100 @@ const getDistance = (lat1, lon1, lat2, lon2) => {
 };
 
 const BloodRequestListScreen = () => {
+  const [requests, setRequests] = useState([]);
   const [selectedBloodType, setSelectedBloodType] = useState('');
   const [selectedUrgency, setSelectedUrgency] = useState('');
   const [maxDistanceKm, setMaxDistanceKm] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  // 🔍 Filtreleme işlemi
-  const filteredRequests = mockRequests.filter((req) => {
+  useEffect(() => {
+    const loadRequests = async () => {
+      try {
+        const data = await fetchRequests();
+        setRequests(data);
+      } catch (error) {
+        Alert.alert('Hata', 'Veriler alınamadı: ' + error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadRequests();
+  }, []);
+
+  // Butona basıldığında çağrılacak fonksiyon
+  const handleComplete = async (id) => {
+    
+    
+    try {
+      await updateRequestStatus(id, 'completed');
+      // State'i güncelle, ilgili request'in durumunu completed yap
+      setRequests((prev) =>
+        prev.map((req) =>
+          req.id === id ? { ...req, status: 'completed' } : req
+        )
+      );
+      Alert.alert('Başarılı', '24 saat içerisinde kan bağış merkezinde kan veriniz.');
+    } catch (error) {
+      Alert.alert('Hata', 'Durum güncellenemedi: ' + error.message);
+    }
+  };
+
+  const filteredRequests = requests.filter((req) => {
     const matchesBlood =
       !selectedBloodType || req.blood_type === selectedBloodType;
-    const matchesUrgency = !selectedUrgency || req.urgency === selectedUrgency;
-    const distance = getDistance(
-      userLocation.latitude,
-      userLocation.longitude,
-      req.latitude,
-      req.longitude
-    );
+
+    const matchesUrgency =
+      !selectedUrgency || req.urgency_level === selectedUrgency;
+
+    const distance = req.latitude && req.longitude
+      ? getDistance(
+          userLocation.latitude,
+          userLocation.longitude,
+          req.latitude,
+          req.longitude
+        )
+      : 0;
+
     const matchesDistance =
       !maxDistanceKm || distance <= parseFloat(maxDistanceKm);
 
-    return matchesBlood && matchesUrgency && matchesDistance;
+    // Sadece active durumdaki kayıtları gösterelim (isteğe bağlı)
+    return matchesBlood && matchesUrgency && matchesDistance && req.status === 'active';
   });
 
   const renderItem = ({ item }) => (
     <View style={styles.row}>
-      <Text style={styles.cell}>{item.hospital}</Text>
+      <Text style={styles.cell}>{item.hospital_name }</Text>
       <Text style={styles.cell}>{item.blood_type}</Text>
-      <Text style={styles.cell}>{item.urgency}</Text>
-      <Text style={styles.cell}>{item.date}</Text>
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Bağış Yap</Text>
+      <Text style={styles.cell}>{item.urgency_level}</Text>
+      <Text style={styles.cell}>
+        {new Date(item.created_at).toLocaleString('tr-TR')}
+      </Text>
+      <TouchableOpacity
+        style={[styles.button, item.status === 'completed' && styles.buttonDisabled]}
+        onPress={() => handleComplete(item.id)}
+        disabled={item.status === 'completed'}
+      >
+        <Text style={styles.buttonText}>
+          {item.status === 'completed' ? 'Tamamlandı' : 'Bağış Yap'}
+        </Text>
       </TouchableOpacity>
     </View>
   );
+
+  if (loading) {
+    return (
+      <View style={[styles.container, {justifyContent: 'center', alignItems: 'center'}]}>
+        <ActivityIndicator size="large" color="#e74c3c" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Kan Talep Listesi</Text>
 
-      {/* 🔻 Filtreler */}
       <View style={styles.filters}>
         <Picker
           selectedValue={selectedBloodType}
@@ -139,7 +166,6 @@ const BloodRequestListScreen = () => {
         </Picker>
       </View>
 
-      {/* 📋 Tablo */}
       <View style={styles.tableHeader}>
         <Text style={styles.headerCell}>Hastane</Text>
         <Text style={styles.headerCell}>Kan</Text>
@@ -153,12 +179,18 @@ const BloodRequestListScreen = () => {
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={{ paddingBottom: 60 }}
+        ListEmptyComponent={
+          <Text style={{ textAlign: 'center', marginTop: 20, color: '#888' }}>
+            Kriterlere uygun kan talebi bulunamadı.
+          </Text>
+        }
       />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  // ... orijinal stilleriniz burada ...
   container: {
     padding: 16,
     backgroundColor: '#fff',
@@ -209,6 +241,9 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 8,
+  },
+  buttonDisabled: {
+    backgroundColor: '#ccc',
   },
   buttonText: {
     color: '#fff',

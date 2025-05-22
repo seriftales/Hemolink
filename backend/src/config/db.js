@@ -8,7 +8,7 @@ const connectDB = async () => {
   try {
     const pool = new Pool({
       host: 'localhost',
-      database: 'postgres', // Mevcut veritabanını kullan
+      database: 'hemolink', // Mevcut veritabanını kullan
       user: 'postgres',
       password: 'a',
       port: 5432,

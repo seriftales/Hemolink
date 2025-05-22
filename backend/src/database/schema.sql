@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS hospitals (
 -- Kan bağış talepleri tablosu
 CREATE TABLE IF NOT EXISTS blood_requests (
     id SERIAL PRIMARY KEY,
+    hospital_name VARCHAR(100) NOT NULL , 
     hospital_id INTEGER REFERENCES hospitals(id),
     blood_type VARCHAR(5) NOT NULL,
     urgency_level VARCHAR(20) NOT NULL,

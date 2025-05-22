@@ -4,6 +4,9 @@ const { registerUser } = require('../controllers/register.js');
 const { getPriorityRequest } = require('../controllers/priority.js');
 const { getActiveRequests, getDonorStatistics, getBloodTypeStatistics } = require('../controllers/statistics.js');
 const { getHospitals, getNearbyHospitals } = require('../controllers/hospital.js');
+const { createBloodRequest } = require('../controllers/create.js');
+const {getRequestForHospital,getRequestForDonor,updateRequest} = require('../controllers/request.js');
+
 const { 
   getUserNotifications, 
   markNotificationAsRead, 
@@ -23,6 +26,10 @@ router.post('/register', registerUser);
 router.post('/hospital-login', loginHospital);
 router.get('/hospital', getHospitals);
 router.get('/nearby-centers', getNearbyHospitals);
+router.post('/create',createBloodRequest) ; 
+router.get('/request',getRequestForHospital) ;
+router.get('/request',getRequestForDonor) ;
+router.put('/update',updateRequest) ;
 
 // Protected routes
 router.get('/priority', auth, getPriorityRequest);
