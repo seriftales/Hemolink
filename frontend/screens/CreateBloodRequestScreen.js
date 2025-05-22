@@ -8,23 +8,30 @@ import {
   Alert
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-
-
+import { createReq } from '../services/api';
 const CreateBloodRequestScreen = ({ route, navigation }) => {
   const hospital = route.params?.hospital;
 
   const [bloodType, setBloodType] = useState('A+');
   const [urgencyLevel, setUrgencyLevel] = useState('low');
 
-  const handleSubmit = () => {
-    Alert.alert('Başarılı', 'Kan talebi oluşturuldu.');
-    // 👇 Daha sonra backend'e gönderilecek alanlar
-    console.log({
-      hospital_id: hospital.id,
-      blood_type: bloodType,
-      urgency_level: urgencyLevel,
-    });
-    navigation.goBack();
+  const handleSubmit = async () => {
+    console.log(hospital.name)   
+    if (!bloodType || !urgencyLevel ) {
+          Alert.alert('Hata', 'Lütfen tüm alanları doldurun.');
+          return;
+        }
+      try {
+        const data = await createReq(hospital.name,hospital.id, bloodType, urgencyLevel);
+        console.log('createData:', data); 
+        Alert.alert('Kan Talebi başarıyla oluşturuldu');
+        navigation.navigate('HospitalHome',{hospital}) ;
+
+    } catch (error) {
+        console.log('Create error:', error);
+        Alert.alert('Talep Başarısız', error.message || 'Lütfen bilgilerinizi kontrol edin.');
+    }
+  
   };
 
   return (

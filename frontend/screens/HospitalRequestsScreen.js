@@ -1,52 +1,55 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-
-const mockRequests = [
-  {
-    id: 1,
-    blood_type: 'A+',
-    urgency_level: 'high',
-    status: 'active',
-    created_at: '2025-05-20 14:33',
-  },
-  {
-    id: 2,
-    blood_type: 'B-',
-    urgency_level: 'critical',
-    status: 'active',
-    created_at: '2025-05-18 09:12',
-  },
-  {
-    id: 3,
-    blood_type: '0+',
-    urgency_level: 'medium',
-    status: 'completed',
-    created_at: '2025-05-10 17:45',
-  },
-];
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import { fetchRequests } from '../services/api'; // doğru yolu yaz
 
 const HospitalRequestsScreen = () => {
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadRequests = async () => {
+      try {
+        const data = await fetchRequests();
+        setRequests(data); // veritabanından gelen gerçek veriler
+      } catch (error) {
+        Alert.alert('Hata', 'Veriler alınamadı: ' + error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadRequests();
+  }, []);
+
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.header}>Talepler</Text>
 
-      <View style={styles.tableHeader}>
-        <Text style={styles.cellHeader}>ID</Text>
-        <Text style={styles.cellHeader}>Kan Grubu</Text>
-        <Text style={styles.cellHeader}>Aciliyet</Text>
-        <Text style={styles.cellHeader}>Durum</Text>
-        <Text style={styles.cellHeader}>Tarih</Text>
-      </View>
+      {loading ? (
+        <ActivityIndicator size="large" color="#e74c3c" />
+      ) : (
+        <>
+          <View style={styles.tableHeader}>
+            <Text style={styles.cellHeader}>ID</Text>
+            <Text style={styles.cellHeader}>Kan Grubu</Text>
+            <Text style={styles.cellHeader}>Aciliyet</Text>
+            <Text style={styles.cellHeader}>Durum</Text>
+            <Text style={styles.cellHeader}>Tarih</Text>
+          </View>
 
-      {mockRequests.map((request) => (
-        <View key={request.id} style={styles.tableRow}>
-          <Text style={styles.cell}>{request.id}</Text>
-          <Text style={styles.cell}>{request.blood_type}</Text>
-          <Text style={styles.cell}>{request.urgency_level}</Text>
-          <Text style={styles.cell}>{request.status}</Text>
-          <Text style={styles.cell}>{request.created_at}</Text>
-        </View>
-      ))}
+          {requests.map((request) => (
+            <View key={request.id} style={styles.tableRow}>
+              <Text style={styles.cell}>{request.id}</Text>
+              <Text style={styles.cell}>{request.blood_type}</Text>
+              <Text style={styles.cell}>{request.urgency_level}</Text>
+              <Text style={styles.cell}>{request.status}</Text>
+              <Text style={styles.cell}>
+                {new Date(request.created_at).toLocaleString('tr-TR')}
+              </Text>
+            </View>
+          ))}
+        </>
+      )}
     </ScrollView>
   );
 };

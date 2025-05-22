@@ -1,4 +1,4 @@
-const BASE_URL = 'http://192.168.124.85:3000';
+const BASE_URL = 'http://192.168.64.254:3000';
 // kendi IP ve portuna göre ayarla
 
 const loginReq = async (email, password) => {
@@ -101,4 +101,78 @@ const hospitalLoginReq = async (email, password) => {
   }
 };
 
-export { loginReq, registerReq, hospitalReq, hospitalLoginReq }; 
+const createReq = async (name,id,bloodType,urgencyLevel) => {
+  try {
+    
+    const requestBody = {
+      name,
+      id,
+      bloodType,
+      urgencyLevel
+    };
+    console.log('Create Request Body:', requestBody);
+
+    const response = await fetch(`${BASE_URL}/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    const data = await response.json();
+    console.log('Create Response:', data);
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Talep başarısız');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Create API Error:', error);
+    alert('Talep işlemi hatası:\n' + error.message);
+    throw error;
+  }
+};
+ const fetchRequests = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/request`, {
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Veriler alınamadı');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Fetch Requests Error:', error);
+    throw error;
+  }
+};
+
+const updateRequestStatus = async (id, status) => {
+  
+  const updateBody= {
+    id,
+    status 
+  } 
+  console.log(updateBody)
+  const response = await fetch(`${BASE_URL}/update`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updateBody),
+  });
+  if (!response.ok) throw new Error('Durum güncellenemedi');
+  return response.json();
+};
+
+
+
+
+
+export { loginReq, registerReq, hospitalReq, hospitalLoginReq ,createReq,fetchRequests,updateRequestStatus}; 
