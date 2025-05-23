@@ -53,7 +53,7 @@ const HomeScreen = ({ navigation, route }) => {
 
 
           <Button
-            title="En Yakın Kan Bağış Merkezlerini Gör"
+            title=" Kan Bağış Merkezleri"
             onPress={() => navigation.navigate('NearbyCenters')}
           />
 

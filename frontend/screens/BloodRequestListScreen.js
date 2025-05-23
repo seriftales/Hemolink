@@ -72,7 +72,7 @@ const BloodRequestListScreen = () => {
           req.id === id ? { ...req, status: 'accepted' } : req
         )
       );
-      Alert.alert('Başarılı', 'Hastane onayı bekleniyor.');
+      Alert.alert('Başarılı', '24 saat içinde kan bağışı merkezinde bulunun.');
     } catch (error) {
       Alert.alert('Hata', 'Bağış yapılamadı: ' + error.message);
     }

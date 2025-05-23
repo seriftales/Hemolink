@@ -38,7 +38,7 @@ const RegisterScreen = ({ navigation }) => {
       style={styles.background}
     >
       <View style={styles.container}>
-        <Text style={styles.title}>Kayıt Ol</Text>
+        
 
         <FormInput placeholder="Adınız" value={name} onChangeText={setName} />
         <FormInput placeholder="Soyadınız" value={surname} onChangeText={setSurname} />
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 24,
-    backgroundColor: 'rgba(255,255,255,0.85)',
+    backgroundColor: 'rgba(255,255,255,0.2)',
   },
   title: {
     fontSize: 28,

@@ -90,19 +90,22 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  buttonSecondary: {
-    borderWidth: 2,
-    borderColor: '#e74c3c',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 12,
-  },
-  buttonSecondaryText: {
-    color: '#e74c3c',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+ buttonSecondary: {
+  backgroundColor: '#e74c3c',    
+  borderWidth: 2,
+  borderColor: '#e74c3c',
+  padding: 15,
+  borderRadius: 10,
+  alignItems: 'center',
+  marginTop: 12,
+},
+
+buttonSecondaryText: {
+  color: '#fff',               
+  fontWeight: 'bold',
+  fontSize: 16,
+}
+
 });
 
 export default DonorLoginScreen;
