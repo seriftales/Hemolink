@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import React, { useEffect, useState } from 'react';
 import { useRoute } from '@react-navigation/native';
 import {
@@ -9,51 +11,56 @@ import {
   Alert,
   Button,
 } from 'react-native';
-import { fetchRequests, updateRequestStatus2 } from '../services/api'; // updateRequestStatus ekledik
+import {
+  fetchRequests,
+  updateRequestStatus2,
+  deleteRequest,
+} from '../services/api';
 
 const HospitalRequestsScreen = () => {
-  
-  const route = useRoute() ; 
+  const route = useRoute();
   let hospital = route.params?.hospital;
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
-const loadRequests = async () => {
-  try {
-    const data = await fetchRequests();
-    // Sadece giriş yapan hastanenin taleplerini al
-    const filteredRequests = data.filter(req => req.hospital_id === hospital.id);
-    setRequests(filteredRequests);
-  } catch (error) {
-    Alert.alert('Hata', 'Veriler alınamadı: ' + error.message);
-  } finally {
-    setLoading(false);
-  }
-};
+  const loadRequests = async () => {
+    try {
+      const data = await fetchRequests();
+      const filteredRequests = data.filter(
+        (req) => req.hospital_id === hospital.id
+      );
+      setRequests(filteredRequests);
+    } catch (error) {
+      Alert.alert('Hata', 'Veriler alınamadı: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     loadRequests();
   }, []);
 
-  // Durumu güncelle (completed yap)
   const handleUpdate = async (id, status) => {
     try {
-      await updateRequestStatus2( id, status );
+      await updateRequestStatus2(id, status);
       Alert.alert('Başarılı', `Talep "${status}" olarak güncellendi.`);
-      // Güncellenen satırı requests state'inde de güncelleyelim ki butonlar değişsin
       setRequests((prev) =>
-        prev.map((req) =>
-          req.id === id ? { ...req, status: status } : req
-        )
+        prev.map((req) => (req.id === id ? { ...req, status: status } : req))
       );
     } catch (error) {
       Alert.alert('Hata', 'Güncelleme başarısız: ' + error.message);
     }
   };
 
-  // Sil butonuna basınca sadece ekrandan kaldır (veritabanı dokunulmaz)
-  const handleDelete = (id) => {
-    setRequests((prev) => prev.filter((req) => req.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      await deleteRequest(id);
+      Alert.alert('Başarılı', 'Talep silindi.');
+      setRequests((prev) => prev.filter((req) => req.id !== id));
+    } catch (error) {
+      Alert.alert('Hata', 'Silme başarısız: ' + error.message);
+    }
   };
 
   return (
@@ -83,13 +90,16 @@ const loadRequests = async () => {
                 {new Date(request.created_at).toLocaleString('tr-TR')}
               </Text>
               <View style={styles.buttonContainer}>
-                {request.status !== 'completed' ? (
-                  <Button
+                {request.status === 'accepted' && (
+                  <
+                    Button
                     title="✅"
                     onPress={() => handleUpdate(request.id, 'completed')}
                     color="#27ae60"
                   />
-                ) : (
+                )}
+                {(request.status === 'completed' ||
+                  request.status === 'active') && (
                   <Button
                     title="🗑️"
                     onPress={() => handleDelete(request.id)}

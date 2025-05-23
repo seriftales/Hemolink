@@ -83,6 +83,24 @@ const getPastDonations = async (req, res) => {
   }
 };
 
+const deleteRequest = async (req, res) => {
+  const  id  = req.body.id;
+  console.log(id) ;
+  try {
+    const data = await connectDB();
+    const result = await data.query('DELETE FROM blood_requests WHERE id = $1', [id]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: 'Talep bulunamadı' });
+    }
+
+    res.status(200).json({ message: 'Talep silindi' });
+  } catch (err) {
+    console.error('deleteRequest error:', err);
+    res.status(500).json({ message: 'Silme işlemi başarısız' });
+  }
+}
+
 
 
 module.exports = {
@@ -90,5 +108,6 @@ module.exports = {
   getRequestForDonor,
   updateRequest,
   updateRequest2,
-  getPastDonations
+  getPastDonations,
+  deleteRequest
 };

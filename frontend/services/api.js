@@ -190,6 +190,25 @@ const updateRequestStatus2 = async (id, status) => {
 };
 
 
+const deleteRequest = async (id) => {
+  
+  const deleteBody = { id };
+  console.log('Delete Request Body:', deleteBody);
+  try {
+    const response = await fetch(`${BASE_URL}/delete`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(deleteBody ),
+    
+    });
+    if (!response.ok) throw new Error('Talep silinemedi');
+    return response.json();
+  } catch (error) {
+    console.error('Delete Request Error:', error);
+    throw error;
+  }
+};
+
 const fetchDonationsByEmail = async (email) => {
 
   const fetchBody = {email} 
@@ -214,5 +233,6 @@ export {
   fetchRequests,
   updateRequestStatus,
   updateRequestStatus2,
-  fetchDonationsByEmail
+  fetchDonationsByEmail,
+  deleteRequest
 }; 
