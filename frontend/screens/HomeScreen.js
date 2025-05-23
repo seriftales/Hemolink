@@ -39,21 +39,21 @@ const HomeScreen = ({ navigation, route }) => {
   };
 
   return (
-    <ImageBackground source={require('../assets/background.png')} style={styles.background}>
+    <ImageBackground source={require('../assets/kandamlası.png')} style={styles.background}>
       <View style={styles.container}>
-        <Header title="HemoLink-419" style={styles.headerText} />
+        
 
         <View style={styles.content}>
-          <Image source={require('../assets/blood-drop.png')} style={styles.image} />
+          <Image source={require('../assets/logo.png')} style={styles.image} />
           <Text style={styles.welcomeText}>
             Hoş Geldiniz{userFromRoute?.name ? `, ${userFromRoute.name}` : ''}!
           </Text>
 
-          <Button title="Bağış Yap" onPress={() => navigation.navigate('BloodRequests',{user})}/>
+          <Button title="Bağış Yap" onPress={() => navigation.navigate('BloodRequests',{user:userFromRoute})}/>
 
 
           <Button
-            title="En Yakın Kan Bağış Merkezlerini Gör"
+            title=" Kan Bağış Merkezleri"
             onPress={() => navigation.navigate('NearbyCenters')}
           />
 
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   content: {
     flex: 1,
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   welcomeText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#e74c3c',
+    color: '#fff',
     marginBottom: 24,
     textAlign: 'center',
   },

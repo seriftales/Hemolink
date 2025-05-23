@@ -1,9 +1,15 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
+
+import backgroundImage from '../assets/blood-drop.png'; // path'i kendi projenize göre ayarlayın
 
 const LoginSelectionScreen = ({ navigation }) => {
   return (
-    <View style={styles.container}>
+    <ImageBackground source={backgroundImage} style={styles.container}>
+
+      {/* Üstüne saydam beyaz overlay */}
+      <View style={styles.overlay} />
+
       {/* Hafif arka plan süsü */}
       <Text style={styles.watermark}>🩸</Text>
 
@@ -38,18 +44,23 @@ const LoginSelectionScreen = ({ navigation }) => {
 
       {/* Alt bilgi */}
       <Text style={styles.tagline}>Hayat Kurtarmak Bir Tık Uzağınızda</Text>
-    </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fdfdfd',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 24,
     paddingVertical: 32,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(143, 17, 17, 0.1)', // Beyaz %10 saydamlık
+    zIndex: 1,
+    pointerEvents: 'none',  // Burayı ekledik, tıklamalar overlay tarafından engellenmesin diye
   },
   logo: {
     fontSize: 34,
@@ -57,15 +68,17 @@ const styles = StyleSheet.create({
     color: '#e74c3c',
     marginBottom: 4,
     letterSpacing: 1,
+    zIndex: 2,
   },
   title: {
     fontSize: 22,
     fontWeight: '700',
     color: '#333',
     marginBottom: 30,
+    zIndex: 2,
   },
   button: {
-    backgroundColor: '#e74c3c',
+    backgroundColor: '#fff',
     paddingVertical: 14,
     paddingHorizontal: 30,
     borderRadius: 12,
@@ -73,31 +86,36 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
     elevation: 2,
+    zIndex: 2,
   },
   buttonText: {
-    color: '#fff',
+    color: '#e74c3c',
     fontSize: 17,
     fontWeight: '600',
+    zIndex: 2,
   },
   buttonSecondary: {
-    borderWidth: 2,
-    borderColor: '#e74c3c',
+    backgroundColor: '#fff', 
     paddingVertical: 14,
     paddingHorizontal: 30,
     borderRadius: 12,
     width: '100%',
     alignItems: 'center',
     marginBottom: 16,
+    elevation: 2,
+    zIndex: 2,
   },
   buttonSecondaryText: {
-    color: '#e74c3c',
+    color: '#e74c3c', 
     fontSize: 17,
     fontWeight: '600',
+    zIndex: 2,
   },
   separatorContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 14,
+    zIndex: 2,
   },
   line: {
     flex: 1,
@@ -106,14 +124,16 @@ const styles = StyleSheet.create({
   },
   separatorText: {
     marginHorizontal: 10,
-    color: '#999',
+    color: '#ff',
     fontSize: 14,
+    zIndex: 2,
   },
   tagline: {
     marginTop: 12,
     fontSize: 14,
-    color: '#666',
+    color: '#ff',
     textAlign: 'center',
+    zIndex: 2,
   },
   watermark: {
     position: 'absolute',
@@ -122,7 +142,7 @@ const styles = StyleSheet.create({
     fontSize: 140,
     color: '#f2dede',
     opacity: 0.25,
-    zIndex: -1,
+    zIndex: 0,
   },
 });
 

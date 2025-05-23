@@ -9,7 +9,16 @@ const HospitalHomeScreen = ({ route, navigation }) => {
   };
 
   const handleViewRequests = () => {
-    navigation.navigate('HospitalRequests');
+    navigation.navigate('HospitalRequests',{hospital});
+  };
+
+  // Çıkış yap ve LoginSelection sayfasına git
+  const handleLogout = () => {
+    // Burada istersen AsyncStorage gibi yerel oturum temizliği yapılabilir
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'LoginSelection' }],
+    });
   };
 
   return (
@@ -35,13 +44,17 @@ const HospitalHomeScreen = ({ route, navigation }) => {
         </Text>
       </View>
 
-      {/* ⬜ Aynı Stilde Butonlar */}
       <TouchableOpacity style={styles.buttonSecondary} onPress={handleCreateBloodRequest}>
         <Text style={styles.buttonSecondaryText}>🩸 Kan Talebi Oluştur</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.buttonSecondary} onPress={handleViewRequests}>
         <Text style={styles.buttonSecondaryText}>📋 Talepleri Görüntüle</Text>
+      </TouchableOpacity>
+
+      {/* Çıkış Butonu */}
+      <TouchableOpacity style={[styles.buttonSecondary, styles.logoutButton]} onPress={handleLogout}>
+        <Text style={[styles.buttonSecondaryText, styles.logoutText]}>🚪 Çıkış Yap</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -91,6 +104,13 @@ const styles = StyleSheet.create({
     color: '#e74c3c',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  logoutButton: {
+    borderColor: '#555',
+    marginTop: 30,
+  },
+  logoutText: {
+    color: '#555',
   },
 });
 

@@ -1,25 +1,67 @@
+#!/usr/bin/env node
+
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Alert } from 'react-native';
-import { fetchRequests } from '../services/api'; // doğru yolu yaz
+import { useRoute } from '@react-navigation/native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+  Alert,
+  Button,
+} from 'react-native';
+import {
+  fetchRequests,
+  updateRequestStatus2,
+  deleteRequest,
+} from '../services/api';
 
 const HospitalRequestsScreen = () => {
+  const route = useRoute();
+  let hospital = route.params?.hospital;
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const loadRequests = async () => {
-      try {
-        const data = await fetchRequests();
-        setRequests(data); // veritabanından gelen gerçek veriler
-      } catch (error) {
-        Alert.alert('Hata', 'Veriler alınamadı: ' + error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const loadRequests = async () => {
+    try {
+      const data = await fetchRequests();
+      const filteredRequests = data.filter(
+        (req) => req.hospital_id === hospital.id
+      );
+      setRequests(filteredRequests);
+    } catch (error) {
+      Alert.alert('Hata', 'Veriler alınamadı: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     loadRequests();
   }, []);
+
+  const handleUpdate = async (id, status) => {
+    try {
+      await updateRequestStatus2(id, status);
+      Alert.alert('Başarılı', `Talep "${status}" olarak güncellendi.`);
+      setRequests((prev) =>
+        prev.map((req) => (req.id === id ? { ...req, status: status } : req))
+      );
+    } catch (error) {
+      Alert.alert('Hata', 'Güncelleme başarısız: ' + error.message);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteRequest(id);
+      Alert.alert('Başarılı', 'Talep silindi.');
+      setRequests((prev) => prev.filter((req) => req.id !== id));
+    } catch (error) {
+      Alert.alert('Hata', 'Silme başarısız: ' + error.message);
+    }
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -35,6 +77,7 @@ const HospitalRequestsScreen = () => {
             <Text style={styles.cellHeader}>Aciliyet</Text>
             <Text style={styles.cellHeader}>Durum</Text>
             <Text style={styles.cellHeader}>Tarih</Text>
+            <Text style={styles.cellHeader}>İşlem</Text>
           </View>
 
           {requests.map((request) => (
@@ -46,6 +89,24 @@ const HospitalRequestsScreen = () => {
               <Text style={styles.cell}>
                 {new Date(request.created_at).toLocaleString('tr-TR')}
               </Text>
+              <View style={styles.buttonContainer}>
+                {request.status === 'accepted' && (
+                  <
+                    Button
+                    title="✅"
+                    onPress={() => handleUpdate(request.id, 'completed')}
+                    color="#27ae60"
+                  />
+                )}
+                {(request.status === 'completed' ||
+                  request.status === 'active') && (
+                  <Button
+                    title="🗑️"
+                    onPress={() => handleDelete(request.id)}
+                    color="#c0392b"
+                  />
+                )}
+              </View>
             </View>
           ))}
         </>
@@ -77,6 +138,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomColor: '#eee',
     borderBottomWidth: 1,
+    alignItems: 'center',
   },
   cellHeader: {
     flex: 1,
@@ -90,6 +152,10 @@ const styles = StyleSheet.create({
     fontSize: 13,
     textAlign: 'center',
     color: '#333',
+  },
+  buttonContainer: {
+    flex: 1,
+    justifyContent: 'center',
   },
 });
 

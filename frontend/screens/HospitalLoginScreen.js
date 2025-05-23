@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 24,
     paddingTop: 100, // 👈 BU satırı ekle! (40 = hafif kayma)
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: 'rgba(255, 255, 255, 0.0)',
   },
   title: {
     fontSize: 26,

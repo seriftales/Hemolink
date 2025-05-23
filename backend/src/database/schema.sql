@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS blood_requests (
     blood_type VARCHAR(5) NOT NULL,
     urgency_level VARCHAR(20) NOT NULL,
     status VARCHAR(20) DEFAULT 'active',
+    donor_email VARCHAR(100), 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT valid_blood_type CHECK (blood_type IN ('A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', '0+', '0-')),

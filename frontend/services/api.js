@@ -155,11 +155,12 @@ const createReq = async (name,id,bloodType,urgencyLevel) => {
   }
 };
 
-const updateRequestStatus = async (id, status) => {
+const updateRequestStatus = async (id, status,userEmail) => {
   
   const updateBody= {
     id,
-    status 
+    status ,
+    userEmail
   } 
   console.log(updateBody)
   const response = await fetch(`${BASE_URL}/update`, {
@@ -172,7 +173,66 @@ const updateRequestStatus = async (id, status) => {
 };
 
 
+const updateRequestStatus2 = async (id, status) => {
+  
+  const updateBody= {
+    id,
+    status 
+  } 
+  console.log(updateBody)
+  const response = await fetch(`${BASE_URL}/update2`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updateBody),
+  });
+  if (!response.ok) throw new Error('Durum güncellenemedi');
+  return response.json();
+};
 
 
+const deleteRequest = async (id) => {
+  
+  const deleteBody = { id };
+  console.log('Delete Request Body:', deleteBody);
+  try {
+    const response = await fetch(`${BASE_URL}/delete`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(deleteBody ),
+    
+    });
+    if (!response.ok) throw new Error('Talep silinemedi');
+    return response.json();
+  } catch (error) {
+    console.error('Delete Request Error:', error);
+    throw error;
+  }
+};
 
-export { loginReq, registerReq, hospitalReq, hospitalLoginReq ,createReq,fetchRequests,updateRequestStatus}; 
+const fetchDonationsByEmail = async (email) => {
+
+  const fetchBody = {email} 
+
+  console.log(fetchBody) ; 
+
+  const response = await fetch (`${BASE_URL}/donations`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(fetchBody),
+  });
+  if (!response.ok) throw new Error('Bağışlar alınamadı');
+  return response.json();
+}
+
+export { 
+  loginReq, 
+  registerReq, 
+  hospitalReq, 
+  hospitalLoginReq ,
+  createReq,
+  fetchRequests,
+  updateRequestStatus,
+  updateRequestStatus2,
+  fetchDonationsByEmail,
+  deleteRequest
+}; 

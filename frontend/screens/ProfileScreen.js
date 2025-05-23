@@ -1,33 +1,41 @@
-// screens/ProfileScreen.js
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
-
-// Mock veri: Bağış geçmişi
-const mockDonations = [
-  {
-    id: 1,
-    hospital: 'KTÜ Kan Merkezi',
-    date: '2024-12-10',
-  },
-  {
-    id: 2,
-    hospital: 'Trabzon Devlet Hastanesi',
-    date: '2024-08-23',
-  },
-];
+import { fetchDonationsByEmail } from '../services/api';
 
 const ProfileScreen = ({ route, navigation }) => {
   const user = route.params?.user;
+  console.log('Profil Ekranı gelen user:', user);
+  const [donations, setDonations] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const handleLogout = () => {
     navigation.navigate('LoginSelection');
+  };
+
+  useEffect(() => {
+    if (user?.email) {
+      loadDonations();
+    }
+  }, [user]);
+
+  const loadDonations = async () => {
+    console.log(user.email);
+    try {
+      const data = await fetchDonationsByEmail(user.email);
+      setDonations(data);
+    } catch (error) {
+      Alert.alert('Hata', 'Bağış geçmişi alınamadı: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!user) {
@@ -46,7 +54,6 @@ const ProfileScreen = ({ route, navigation }) => {
       <View style={styles.container}>
         <Text style={styles.header}>Profilim</Text>
 
-        {/* 👤 Kullanıcı Bilgileri */}
         <View style={styles.card}>
           <Info label="Ad Soyad" value={`${user.name} ${user.surname || ''}`} />
           <Info label="Email" value={user.email} />
@@ -62,18 +69,22 @@ const ProfileScreen = ({ route, navigation }) => {
           />
         </View>
 
-        {/* 🩸 Bağış Geçmişi */}
         <Text style={styles.subHeader}>Bağış Geçmişi</Text>
-        {mockDonations.length > 0 ? (
+
+        {loading ? (
+          <ActivityIndicator size="large" color="#e74c3c" />
+        ) : donations.length > 0 ? (
           <View style={styles.table}>
             <View style={styles.tableHeader}>
               <Text style={styles.tableHeaderText}>Tarih</Text>
               <Text style={styles.tableHeaderText}>Hastane</Text>
             </View>
-            {mockDonations.map((donation) => (
+            {donations.map((donation) => (
               <View key={donation.id} style={styles.tableRow}>
-                <Text style={styles.tableCell}>{donation.date}</Text>
-                <Text style={styles.tableCell}>{donation.hospital}</Text>
+                <Text style={styles.tableCell}>
+                  {new Date(donation.created_at).toLocaleDateString('tr-TR')}
+                </Text>
+                <Text style={styles.tableCell}>{donation.hospital_name}</Text>
               </View>
             ))}
           </View>
