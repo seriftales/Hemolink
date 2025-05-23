@@ -13,7 +13,7 @@ const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [age, setAge] = useState('');
-  const [bloodType, setBloodType] = useState('A+');
+  const [bloodType, setBloodType] = useState('');
 
   const handleRegister = async () => {
     if (!name || !surname || !email || !password || !age || !bloodType) {
@@ -48,7 +48,7 @@ const RegisterScreen = ({ navigation }) => {
 
         {/* Kan Grubu Seçimi */}
         <View style={styles.pickerContainer}>
-          <Text style={styles.pickerLabel}>Kan Grubu:</Text>
+          
           <Picker
             selectedValue={bloodType}
             style={styles.picker}
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 24,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: 'rgba(255,255,255,0.1)',
   },
   title: {
     fontSize: 28,
@@ -98,11 +98,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 20,
   },
-  pickerLabel: {
-    fontWeight: 'bold',
-    color: '#e74c3c',
-    marginBottom: 5,
-  },
+  
   picker: {
     height: 50,
     backgroundColor: '#fff',

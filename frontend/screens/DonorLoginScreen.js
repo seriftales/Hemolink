@@ -91,9 +91,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
  buttonSecondary: {
-  backgroundColor: '#e74c3c',    
+  backgroundColor: '#e3f2fd',    
   borderWidth: 2,
-  borderColor: '#e74c3c',
+  borderColor: '#e3f2fd',
   padding: 15,
   borderRadius: 10,
   alignItems: 'center',
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
 },
 
 buttonSecondaryText: {
-  color: '#fff',               
+  color: '#e74c3c',               
   fontWeight: 'bold',
   fontSize: 16,
 }
