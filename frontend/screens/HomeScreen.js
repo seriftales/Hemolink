@@ -49,7 +49,7 @@ const HomeScreen = ({ navigation, route }) => {
             Hoş Geldiniz{userFromRoute?.name ? `, ${userFromRoute.name}` : ''}!
           </Text>
 
-          <Button title="Bağış Yap" onPress={() => navigation.navigate('BloodRequests',{user})}/>
+          <Button title="Bağış Yap" onPress={() => navigation.navigate('BloodRequests',{user:userFromRoute})}/>
 
 
           <Button

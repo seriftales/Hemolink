@@ -1,5 +1,6 @@
 import { fetchRequests } from '../services/api'; 
 import React, { useState, useEffect } from 'react';
+import { useRoute } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -19,6 +20,8 @@ const userLocation = {
   longitude: 39.720,
 };
 
+
+
 const getDistance = (lat1, lon1, lat2, lon2) => {
   const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -32,6 +35,10 @@ const getDistance = (lat1, lon1, lat2, lon2) => {
 };
 
 const BloodRequestListScreen = () => {
+  const route = useRoute();
+  const user = route.params?.user;
+  console.log("Kan Talep Listesi Ekranı gelen user:", user);
+
   const [requests, setRequests] = useState([]);
   const [selectedBloodType, setSelectedBloodType] = useState('');
   const [selectedUrgency, setSelectedUrgency] = useState('');
@@ -58,16 +65,16 @@ const BloodRequestListScreen = () => {
     
     
     try {
-      await updateRequestStatus(id, 'completed');
+      await updateRequestStatus(id, 'accepted',user.email);
       // State'i güncelle, ilgili request'in durumunu completed yap
       setRequests((prev) =>
         prev.map((req) =>
-          req.id === id ? { ...req, status: 'completed' } : req
+          req.id === id ? { ...req, status: 'accepted' } : req
         )
       );
-      Alert.alert('Başarılı', '24 saat içerisinde kan bağış merkezinde kan veriniz.');
+      Alert.alert('Başarılı', 'Hastane onayı bekleniyor.');
     } catch (error) {
-      Alert.alert('Hata', 'Durum güncellenemedi: ' + error.message);
+      Alert.alert('Hata', 'Bağış yapılamadı: ' + error.message);
     }
   };
 

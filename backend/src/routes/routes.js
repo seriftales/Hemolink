@@ -5,7 +5,7 @@ const { getPriorityRequest } = require('../controllers/priority.js');
 const { getActiveRequests, getDonorStatistics, getBloodTypeStatistics } = require('../controllers/statistics.js');
 const { getHospitals, getNearbyHospitals } = require('../controllers/hospital.js');
 const { createBloodRequest } = require('../controllers/create.js');
-const {getRequestForHospital,getRequestForDonor,updateRequest} = require('../controllers/request.js');
+const {getRequestForHospital,getRequestForDonor,updateRequest,updateRequest2,getPastDonations} = require('../controllers/request.js');
 
 const { 
   getUserNotifications, 
@@ -30,6 +30,8 @@ router.post('/create',createBloodRequest) ;
 router.get('/request',getRequestForHospital) ;
 router.get('/request',getRequestForDonor) ;
 router.put('/update',updateRequest) ;
+router.put('/update2',updateRequest2) ;
+router.post('/donations',getPastDonations) ; 
 
 // Protected routes
 router.get('/priority', auth, getPriorityRequest);

@@ -23,8 +23,8 @@ const createBloodRequest = async (req, res) => {
 
     // Yeni kullanıcı oluştur
     const result = await pool.query(
-      'INSERT INTO blood_requests (hospital_name,hospital_id, blood_type, urgency_level,status) VALUES ($1, $2, $3, $4,$5) RETURNING *',
-      [name,id, bloodType, urgencyLevel,'active']
+      'INSERT INTO blood_requests (hospital_name,hospital_id, blood_type, urgency_level,status,donor_email) VALUES ($1, $2, $3, $4,$5,$6) RETURNING *',
+      [name,id, bloodType, urgencyLevel,'active','-']
     );
 
     const newCreate = result.rows[0];
