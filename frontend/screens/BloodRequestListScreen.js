@@ -1,4 +1,4 @@
-import { fetchRequests, updateRequestStatus } from '../services/api'; 
+import { fetchRequests, updateRequestStatus,getPhones } from '../services/api'; 
 import React, { useState, useEffect } from 'react';
 import { useRoute } from '@react-navigation/native';
 import {
@@ -22,20 +22,34 @@ const BloodRequestListScreen = () => {
   const [selectedUrgency, setSelectedUrgency] = useState('');
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const loadRequests = async () => {
-      try {
-        const data = await fetchRequests();
-        setRequests(data);
-      } catch (error) {
-        Alert.alert('Hata', 'Veriler alınamadı: ' + error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+useEffect(() => {
+  const loadRequests = async () => {
+    try {
+      const data = await fetchRequests(); // array
+      const allHospitalID = data.map(req => req.hospital_id);
+      console.log('📋 Tüm Hastane ID\'leri:', allHospitalID);
 
-    loadRequests();
-  }, []);
+      const phoneData = await getPhones(allHospitalID); // obje döndü
+      console.log('📞 Gelen Telefonlar:', phoneData);
+
+      const mappedRequests = data.map(req => {
+        return {
+          ...req,
+          phone: phoneData[req.hospital_id] || 'Bilinmiyor',
+        };
+      });
+
+      setRequests(mappedRequests);
+    } catch (error) {
+      Alert.alert('Hata', 'Veriler alınamadı: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  loadRequests();
+}, []);
+
 
   const handleComplete = async (id) => {
     try {

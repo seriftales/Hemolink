@@ -1,4 +1,4 @@
-const BASE_URL = 'http://192.168.28.85:3000';
+const BASE_URL = 'http://192.168.64.254:3000';
 // kendi IP ve portuna göre ayarla
 
 const loginReq = async (email, password) => {
@@ -224,6 +224,20 @@ const fetchDonationsByEmail = async (email) => {
   return response.json();
 }
 
+const getPhones = async (hospitalIds) => {
+  
+  console.log(hospitalIds) ; 
+  const response = await fetch(`${BASE_URL}/phones`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ids: hospitalIds }),
+  });
+  return await response.json(); // [{ hospital_id: 1, phone: '555-1234' }, ...]
+};
+
+
+
+
 export { 
   loginReq, 
   registerReq, 
@@ -234,5 +248,6 @@ export {
   updateRequestStatus,
   updateRequestStatus2,
   fetchDonationsByEmail,
-  deleteRequest
+  deleteRequest,
+  getPhones
 }; 
