@@ -1,4 +1,4 @@
-import { fetchRequests } from '../services/api'; 
+import { fetchRequests, updateRequestStatus } from '../services/api'; 
 import React, { useState, useEffect } from 'react';
 import { useRoute } from '@react-navigation/native';
 import {
@@ -12,28 +12,6 @@ import {
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
-// Yeni: updateRequestStatus fonksiyonunu import ettim
-import { updateRequestStatus } from '../services/api';
-
-const userLocation = {
-  latitude: 40.987,
-  longitude: 39.720,
-};
-
-
-
-const getDistance = (lat1, lon1, lat2, lon2) => {
-  const R = 6371;
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLon = ((lon2 - lon1) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) ** 2;
-  return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
-};
-
 const BloodRequestListScreen = () => {
   const route = useRoute();
   const user = route.params?.user;
@@ -42,7 +20,6 @@ const BloodRequestListScreen = () => {
   const [requests, setRequests] = useState([]);
   const [selectedBloodType, setSelectedBloodType] = useState('');
   const [selectedUrgency, setSelectedUrgency] = useState('');
-  const [maxDistanceKm, setMaxDistanceKm] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -60,13 +37,9 @@ const BloodRequestListScreen = () => {
     loadRequests();
   }, []);
 
-  // Butona basıldığında çağrılacak fonksiyon
   const handleComplete = async (id) => {
-    
-    
     try {
-      await updateRequestStatus(id, 'accepted',user.email);
-      // State'i güncelle, ilgili request'in durumunu completed yap
+      await updateRequestStatus(id, 'accepted', user.email);
       setRequests((prev) =>
         prev.map((req) =>
           req.id === id ? { ...req, status: 'accepted' } : req
@@ -85,30 +58,30 @@ const BloodRequestListScreen = () => {
     const matchesUrgency =
       !selectedUrgency || req.urgency_level === selectedUrgency;
 
-    const distance = req.latitude && req.longitude
-      ? getDistance(
-          userLocation.latitude,
-          userLocation.longitude,
-          req.latitude,
-          req.longitude
-        )
-      : 0;
-
-    const matchesDistance =
-      !maxDistanceKm || distance <= parseFloat(maxDistanceKm);
-
-    // Sadece active durumdaki kayıtları gösterelim (isteğe bağlı)
-    return matchesBlood && matchesUrgency && matchesDistance && req.status === 'active';
+    return matchesBlood && matchesUrgency && req.status === 'active';
   });
 
   const renderItem = ({ item }) => (
-    <View style={styles.row}>
-      <Text style={styles.cell}>{item.hospital_name }</Text>
-      <Text style={styles.cell}>{item.blood_type}</Text>
-      <Text style={styles.cell}>{item.urgency_level}</Text>
-      <Text style={styles.cell}>
-        {new Date(item.created_at).toLocaleString('tr-TR')}
-      </Text>
+    <View style={styles.card}>
+      <Text style={styles.cardTitle}>{item.hospital_name}</Text>
+      <View style={styles.cardRow}>
+        <Text style={styles.cardLabel}>Kan Grubu:</Text>
+        <Text style={styles.cardValue}>{item.blood_type}</Text>
+      </View>
+      <View style={styles.cardRow}>
+        <Text style={styles.cardLabel}>Aciliyet:</Text>
+        <Text style={styles.cardValue}>{item.urgency_level}</Text>
+      </View>
+      <View style={styles.cardRow}>
+        <Text style={styles.cardLabel}>Tarih:</Text>
+        <Text style={styles.cardValue}>
+          {new Date(item.created_at).toLocaleString('tr-TR')}
+        </Text>
+      </View>
+      <View style={styles.cardRow}>
+        <Text style={styles.cardLabel}>Telefon:</Text>
+        <Text style={styles.cardValue}>{item.phone}</Text>
+      </View>
       <TouchableOpacity
         style={[styles.button, item.status === 'completed' && styles.buttonDisabled]}
         onPress={() => handleComplete(item.id)}
@@ -123,7 +96,7 @@ const BloodRequestListScreen = () => {
 
   if (loading) {
     return (
-      <View style={[styles.container, {justifyContent: 'center', alignItems: 'center'}]}>
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
         <ActivityIndicator size="large" color="#e74c3c" />
       </View>
     );
@@ -134,51 +107,37 @@ const BloodRequestListScreen = () => {
       <Text style={styles.header}>Kan Talep Listesi</Text>
 
       <View style={styles.filters}>
-        <Picker
-          selectedValue={selectedBloodType}
-          style={styles.picker}
-          onValueChange={(itemValue) => setSelectedBloodType(itemValue)}
-        >
-          <Picker.Item label="Kan Grubu" value="" />
-          <Picker.Item label="A+" value="A+" />
-          <Picker.Item label="A-" value="A-" />
-          <Picker.Item label="B+" value="B+" />
-          <Picker.Item label="B-" value="B-" />
-          <Picker.Item label="0+" value="0+" />
-          <Picker.Item label="0-" value="0-" />
-        </Picker>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={selectedBloodType}
+            style={styles.picker}
+            onValueChange={(itemValue) => setSelectedBloodType(itemValue)}
+          >
+            <Picker.Item label="Kan Grubu" value="" />
+            <Picker.Item label="A+" value="A+" />
+            <Picker.Item label="A-" value="A-" />
+            <Picker.Item label="AB+" value="AB+" />
+            <Picker.Item label="AB-" value="AB-" />
+            <Picker.Item label="B+" value="B+" />
+            <Picker.Item label="B-" value="B-" />
+            <Picker.Item label="0+" value="0+" />
+            <Picker.Item label="0-" value="0-" />
+          </Picker>
+        </View>
 
-        <Picker
-          selectedValue={selectedUrgency}
-          style={styles.picker}
-          onValueChange={(itemValue) => setSelectedUrgency(itemValue)}
-        >
-          <Picker.Item label="Aciliyet" value="" />
-          <Picker.Item label="low" value="low" />
-          <Picker.Item label="medium" value="medium" />
-          <Picker.Item label="high" value="high" />
-          <Picker.Item label="critical" value="critical" />
-        </Picker>
-
-        <Picker
-          selectedValue={maxDistanceKm}
-          style={styles.picker}
-          onValueChange={(itemValue) => setMaxDistanceKm(itemValue)}
-        >
-          <Picker.Item label="Maks. Mesafe (km)" value="" />
-          <Picker.Item label="5 km" value="5" />
-          <Picker.Item label="10 km" value="10" />
-          <Picker.Item label="20 km" value="20" />
-          <Picker.Item label="100 km" value="100" />
-        </Picker>
-      </View>
-
-      <View style={styles.tableHeader}>
-        <Text style={styles.headerCell}>Hastane</Text>
-        <Text style={styles.headerCell}>Kan</Text>
-        <Text style={styles.headerCell}>Acil</Text>
-        <Text style={styles.headerCell}>Tarih</Text>
-        <Text style={styles.headerCell}></Text>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={selectedUrgency}
+            style={styles.picker}
+            onValueChange={(itemValue) => setSelectedUrgency(itemValue)}
+          >
+            <Picker.Item label="Aciliyet" value="" />
+            <Picker.Item label="low" value="low" />
+            <Picker.Item label="medium" value="medium" />
+            <Picker.Item label="high" value="high" />
+            <Picker.Item label="critical" value="critical" />
+          </Picker>
+        </View>
       </View>
 
       <FlatList
@@ -197,57 +156,86 @@ const BloodRequestListScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  // ... orijinal stilleriniz burada ...
   container: {
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#f4f4f4', // Daha yumuşak bir arka plan rengi
     flex: 1,
   },
   header: {
-    fontSize: 24,
+    fontSize: 28,
     color: '#e74c3c',
     fontWeight: 'bold',
-    marginBottom: 12,
+    marginBottom: 16,
+    textAlign: 'center',
+    textShadowColor: '#ccc',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   filters: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 10,
     justifyContent: 'space-between',
+    marginBottom: 16,
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  pickerContainer: {
+    flex: 1,
+    marginHorizontal: 5,
   },
   picker: {
-    width: '32%',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#f9f9f9',
     borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    paddingHorizontal: 8,
   },
-  tableHeader: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    paddingBottom: 6,
-    borderColor: '#ccc',
-    marginBottom: 10,
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    borderLeftWidth: 5,
+    borderLeftColor: '#e74c3c', // Sol kenar vurgusu
   },
-  headerCell: {
-    flex: 1,
+  cardTitle: {
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
+    marginBottom: 8,
   },
-  row: {
+  cardRow: {
     flexDirection: 'row',
-    paddingVertical: 10,
-    borderBottomWidth: 0.5,
-    borderColor: '#ccc',
-    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 4,
   },
-  cell: {
-    flex: 1,
-    color: '#444',
+  cardLabel: {
+    fontSize: 14,
+    color: '#555',
+    fontWeight: '600',
+  },
+  cardValue: {
+    fontSize: 14,
+    color: '#333',
+    fontWeight: '600',
   },
   button: {
     backgroundColor: '#e74c3c',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     borderRadius: 8,
+    marginTop: 12,
+    alignItems: 'center',
   },
   buttonDisabled: {
     backgroundColor: '#ccc',
@@ -255,6 +243,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: 16,
   },
 });
 

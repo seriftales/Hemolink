@@ -9,7 +9,8 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
-  Button,
+  TouchableOpacity,
+  ImageBackground,
 } from 'react-native';
 import {
   fetchRequests,
@@ -30,6 +31,11 @@ const HospitalRequestsScreen = () => {
         (req) => req.hospital_id === hospital.id
       );
       setRequests(filteredRequests);
+
+      // Eğer talepler boşsa uyarı mesajı göster
+      if (filteredRequests.length === 0) {
+        Alert.alert('Bilgi', 'Şu anda hiçbir talep bulunmamaktadır.');
+      }
     } catch (error) {
       Alert.alert('Hata', 'Veriler alınamadı: ' + error.message);
     } finally {
@@ -64,98 +70,165 @@ const HospitalRequestsScreen = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.header}>Talepler</Text>
+    <ImageBackground
+      source={require('../assets/background.png')} // Arka plan resmi
+      style={styles.background}
+    >
+      <View style={styles.overlay}>
 
-      {loading ? (
-        <ActivityIndicator size="large" color="#e74c3c" />
-      ) : (
-        <>
-          <View style={styles.tableHeader}>
-            <Text style={styles.cellHeader}>ID</Text>
-            <Text style={styles.cellHeader}>Kan Grubu</Text>
-            <Text style={styles.cellHeader}>Aciliyet</Text>
-            <Text style={styles.cellHeader}>Durum</Text>
-            <Text style={styles.cellHeader}>Tarih</Text>
-            <Text style={styles.cellHeader}>İşlem</Text>
-          </View>
-
-          {requests.map((request) => (
-            <View key={request.id} style={styles.tableRow}>
-              <Text style={styles.cell}>{request.id}</Text>
-              <Text style={styles.cell}>{request.blood_type}</Text>
-              <Text style={styles.cell}>{request.urgency_level}</Text>
-              <Text style={styles.cell}>{request.status}</Text>
-              <Text style={styles.cell}>
-                {new Date(request.created_at).toLocaleString('tr-TR')}
-              </Text>
-              <View style={styles.buttonContainer}>
-                {request.status === 'accepted' && (
-                  <
-                    Button
-                    title="✅"
-                    onPress={() => handleUpdate(request.id, 'completed')}
-                    color="#27ae60"
-                  />
-                )}
-                {(request.status === 'completed' ||
-                  request.status === 'active') && (
-                  <Button
-                    title="🗑️"
-                    onPress={() => handleDelete(request.id)}
-                    color="#c0392b"
-                  />
-                )}
+        {loading ? (
+          <ActivityIndicator size="large" color="#e74c3c" />
+        ) : (
+          <ScrollView contentContainerStyle={styles.scrollContainer}>
+            {requests.map((request) => (
+              <View key={request.id} style={styles.card}>
+                <Text style={styles.cardTitle}>Talep ID: {request.id}</Text>
+                <View style={styles.cardRow}>
+                  <Text style={styles.cardLabel}>Kan Grubu:</Text>
+                  <Text style={styles.cardValue}>{request.blood_type}</Text>
+                </View>
+                <View style={styles.cardRow}>
+                  <Text style={styles.cardLabel}>Aciliyet:</Text>
+                  <Text style={styles.cardValue}>{request.urgency_level}</Text>
+                </View>
+                <View style={styles.cardRow}>
+                  <Text style={styles.cardLabel}>Durum:</Text>
+                  <Text
+                    style={[
+                      styles.cardValue,
+                      request.status === 'completed'
+                        ? styles.statusCompleted
+                        : styles.statusActive,
+                    ]}
+                  >
+                    {request.status}
+                  </Text>
+                </View>
+                <View style={styles.cardRow}>
+                  <Text style={styles.cardLabel}>Tarih:</Text>
+                  <Text style={styles.cardValue}>
+                    {new Date(request.created_at).toLocaleString('tr-TR')}
+                  </Text>
+                </View>
+                <View style={styles.buttonContainer}>
+                  {request.status === 'accepted' && (
+                    <TouchableOpacity
+                      style={[styles.button, styles.completeButton]}
+                      onPress={() => handleUpdate(request.id, 'completed')}
+                    >
+                      <Text style={styles.buttonText}>Tamamla</Text>
+                    </TouchableOpacity>
+                  )}
+                  {(request.status === 'completed' ||
+                    request.status === 'active') && (
+                    <TouchableOpacity
+                      style={[styles.button, styles.deleteButton]}
+                      onPress={() => handleDelete(request.id)}
+                    >
+                      <Text style={styles.buttonText}>Sil</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
               </View>
-            </View>
-          ))}
-        </>
-      )}
-    </ScrollView>
+            ))}
+          </ScrollView>
+        )}
+      </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
+    flex: 1,
+    resizeMode: 'cover',
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // Hafif beyaz bir katman
     padding: 16,
-    backgroundColor: '#fff',
   },
   header: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    color: '#e74c3c',
+    fontSize: 24, // Font boyutu küçültüldü
+    fontWeight: '600', // Daha hafif bir font ağırlığı
+    color: '#d35400', // Daha yumuşak bir renk tonu
     marginBottom: 20,
     textAlign: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Hafif beyaz bir arka plan
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8, // Yuvarlatılmış köşeler
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3, // Hafif gölge efekti
   },
-  tableHeader: {
-    flexDirection: 'row',
-    backgroundColor: '#f8d7da',
-    padding: 12,
-    borderRadius: 8,
+  scrollContainer: {
+    paddingBottom: 20,
   },
-  tableRow: {
-    flexDirection: 'row',
-    paddingVertical: 10,
-    borderBottomColor: '#eee',
-    borderBottomWidth: 1,
-    alignItems: 'center',
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  cellHeader: {
-    flex: 1,
+  cardTitle: {
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#c0392b',
-    fontSize: 14,
-    textAlign: 'center',
-  },
-  cell: {
-    flex: 1,
-    fontSize: 13,
-    textAlign: 'center',
     color: '#333',
+    marginBottom: 8,
+  },
+  cardRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  cardLabel: {
+    fontSize: 14,
+    color: '#555',
+    fontWeight: '600',
+  },
+  cardValue: {
+    fontSize: 14,
+    color: '#333',
+    fontWeight: '600',
+  },
+  statusCompleted: {
+    color: '#27ae60', // Yeşil renk (Tamamlandı)
+    fontWeight: 'bold',
+  },
+  statusActive: {
+    color: '#e74c3c', // Kırmızı renk (Aktif)
+    fontWeight: 'bold',
   },
   buttonContainer: {
-    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 12,
+  },
+  button: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: 'center',
     justifyContent: 'center',
+  },
+  completeButton: {
+    backgroundColor: '#27ae60', // Yeşil renk
+  },
+  deleteButton: {
+    backgroundColor: '#c0392b', // Kırmızı renk
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 14,
   },
 });
 
