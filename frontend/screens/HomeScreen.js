@@ -39,12 +39,12 @@ const HomeScreen = ({ navigation, route }) => {
   };
 
   return (
-    <ImageBackground source={require('../assets/kandamlası.png')} style={styles.background}>
+    <ImageBackground source={require('../assets/tema2.png')} style={styles.background}>
       <View style={styles.container}>
         
 
         <View style={styles.content}>
-          <Image source={require('../assets/logo.png')} style={styles.image} />
+          
           <Text style={styles.welcomeText}>
             Hoş Geldiniz{userFromRoute?.name ? `, ${userFromRoute.name}` : ''}!
           </Text>

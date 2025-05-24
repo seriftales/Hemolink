@@ -1,5 +1,16 @@
+// 🔥 Bu kod, birebir senin beğendiğin tasarımı oluşturur — optimize edilmiş kart boyutu ve arka plan görünürlüğü
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  ImageBackground,
+  Dimensions,
+} from 'react-native';
+
+const { width } = Dimensions.get('window');
 
 const HospitalHomeScreen = ({ route, navigation }) => {
   const hospital = route.params?.hospital;
@@ -9,108 +20,136 @@ const HospitalHomeScreen = ({ route, navigation }) => {
   };
 
   const handleViewRequests = () => {
-    navigation.navigate('HospitalRequests',{hospital});
+    navigation.navigate('HospitalRequests', { hospital });
   };
 
-  // Çıkış yap ve LoginSelection sayfasına git
   const handleLogout = () => {
-    // Burada istersen AsyncStorage gibi yerel oturum temizliği yapılabilir
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'LoginSelection' }],
-    });
+    navigation.reset({ index: 0, routes: [{ name: 'LoginSelection' }] });
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>🏥 Hastane Bilgileri</Text>
+    <ImageBackground
+      source={require('../assets/backgroundOfHospitalHomeScreen.png')} // 👈 Buraya senin tam istediğin arka plan görseli gelecek
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.card}>
+          <Text style={styles.header}>🏥 Hastane Bilgileri</Text>
 
-      <View style={styles.card}>
-        <Text style={styles.label}>Ad:</Text>
-        <Text style={styles.value}>{hospital?.name || '---'}</Text>
+          <View style={styles.infoBox}>
+            <Text style={styles.label}>Ad:</Text>
+            <Text style={styles.value}>{hospital?.name || '---'}</Text>
 
-        <Text style={styles.label}>Email:</Text>
-        <Text style={styles.value}>{hospital?.email || '---'}</Text>
+            <Text style={styles.label}>Email:</Text>
+            <Text style={styles.value}>{hospital?.email || '---'}</Text>
 
-        <Text style={styles.label}>Adres:</Text>
-        <Text style={styles.value}>{hospital?.address || '---'}</Text>
+            <Text style={styles.label}>Adres:</Text>
+            <Text style={styles.value}>{hospital?.address || '---'}</Text>
 
-        <Text style={styles.label}>Telefon:</Text>
-        <Text style={styles.value}>{hospital?.phone || '---'}</Text>
+            <Text style={styles.label}>Telefon:</Text>
+            <Text style={styles.value}>{hospital?.phone || '---'}</Text>
 
-        <Text style={styles.label}>Konum:</Text>
-        <Text style={styles.value}>
-          Enlem: {hospital?.latitude || '---'} | Boylam: {hospital?.longitude || '---'}
-        </Text>
-      </View>
+            <Text style={styles.label}>Enlem:</Text>
+            <Text style={styles.value}>
+              Enlem: {hospital?.latitude || '---'} | Boylam: {hospital?.longitude || '---'}
+            </Text>
+          </View>
 
-      <TouchableOpacity style={styles.buttonSecondary} onPress={handleCreateBloodRequest}>
-        <Text style={styles.buttonSecondaryText}>🩸 Kan Talebi Oluştur</Text>
-      </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonRed} onPress={handleCreateBloodRequest}>
+            <Text style={styles.buttonText}>🩸 KAN TALEBİ OLUŞTUR</Text>
+          </TouchableOpacity>
 
-      <TouchableOpacity style={styles.buttonSecondary} onPress={handleViewRequests}>
-        <Text style={styles.buttonSecondaryText}>📋 Talepleri Görüntüle</Text>
-      </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonRed} onPress={handleViewRequests}>
+            <Text style={styles.buttonText}>📋 TALEPLERİ GÖRÜNTÜLE</Text>
+          </TouchableOpacity>
 
-      {/* Çıkış Butonu */}
-      <TouchableOpacity style={[styles.buttonSecondary, styles.logoutButton]} onPress={handleLogout}>
-        <Text style={[styles.buttonSecondaryText, styles.logoutText]}>🚪 Çıkış Yap</Text>
-      </TouchableOpacity>
-    </ScrollView>
+          <TouchableOpacity style={styles.buttonGray} onPress={handleLogout}>
+            <Text style={styles.logoutText}>➡️ ÇIKIŞ YAP</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 24,
-    backgroundColor: '#fff',
-    flexGrow: 1,
-    alignItems: 'center',
+  background: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
   },
-  header: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#e74c3c',
-    marginBottom: 20,
+  container: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
   },
   card: {
+    width: width * 0.88,
+    backgroundColor: '#fff',
+    borderRadius: 26,
+    paddingVertical: 20,
+    paddingHorizontal: 18,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 5,
+    elevation: 3,
+    marginTop: 40,
+    marginBottom: 40,
+    opacity: 0.94,
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#c0392b',
+    marginBottom: 16,
+  },
+  infoBox: {
     width: '100%',
     backgroundColor: '#f9f9f9',
-    padding: 20,
-    borderRadius: 12,
-    marginBottom: 30,
-    elevation: 3,
+    padding: 14,
+    borderRadius: 16,
+    marginBottom: 20,
   },
   label: {
-    fontSize: 16,
+    fontSize: 13,
     color: '#777',
-    marginTop: 12,
+    marginTop: 10,
+    fontWeight: '600',
   },
   value: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#2c3e50',
   },
-  buttonSecondary: {
-    borderColor: '#e74c3c',
-    borderWidth: 2,
-    padding: 15,
-    borderRadius: 10,
+  buttonRed: {
     width: '100%',
+    backgroundColor: '#e74c3c',
+    paddingVertical: 12,
+    borderRadius: 22,
     alignItems: 'center',
-    marginTop: 12,
+    marginTop: 10,
   },
-  buttonSecondaryText: {
-    color: '#e74c3c',
+  buttonText: {
+    color: '#fff',
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 15,
   },
-  logoutButton: {
-    borderColor: '#555',
-    marginTop: 30,
+  buttonGray: {
+    width: '100%',
+    backgroundColor: '#a4a4a4',
+    paddingVertical: 12,
+    borderRadius: 22,
+    alignItems: 'center',
+    marginTop: 18,
   },
   logoutText: {
-    color: '#555',
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 15,
   },
 });
 
