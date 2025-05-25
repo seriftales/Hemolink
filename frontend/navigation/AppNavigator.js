@@ -14,6 +14,7 @@ import HospitalHomeScreen from '../screens/HospitalHomeScreen';
 import HospitalRequestsScreen from './screens/HospitalRequestsScreen';
 import CreateBloodRequestScreen from './screens/CreateBloodRequestScreen';
 import BloodRequestListScreen from './screens/BloodRequestListScreen';
+import BloodDonationInfoScreen from './screens/BloodDonationInfoScreen';
 
 const Stack = createStackNavigator();
 
@@ -28,6 +29,7 @@ const AppNavigator = () => {
         <Stack.Screen name="HospitalLogin" component={HospitalLoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="BloodDonationInfo" component={BloodDonationInfoScreen} />
         <Stack.Screen name="CreateBloodRequest" component={CreateBloodRequestScreen} />
         <Stack.Screen name="NearbyCenters" component={NearbyCentersScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />

@@ -1,16 +1,22 @@
+// LoginSelectionScreen.js — Güncellenmiş Tam Hali
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ImageBackground,
+} from 'react-native';
 
-import backgroundImage from '../assets/blood-drop.png'; // path'i kendi projenize göre ayarlayın
+import backgroundImage from '../assets/blood-drop.png';
 
 const LoginSelectionScreen = ({ navigation }) => {
   return (
-    <ImageBackground source={backgroundImage} style={styles.container}>
-
-      {/* Üstüne saydam beyaz overlay */}
+    <ImageBackground source={backgroundImage} style={styles.container} resizeMode="cover">
+      {/* Üstüne saydam overlay */}
       <View style={styles.overlay} />
 
-      {/* Hafif arka plan süsü */}
+      {/* Arka planda emoji watermark */}
       <Text style={styles.watermark}>🩸</Text>
 
       {/* Logo */}
@@ -19,7 +25,7 @@ const LoginSelectionScreen = ({ navigation }) => {
       {/* Başlık */}
       <Text style={styles.title}>Giriş Tipi Seçin</Text>
 
-      {/* Bağışçı Butonu */}
+      {/* Bağışçı Girişi */}
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate('DonorLogin')}
@@ -34,12 +40,20 @@ const LoginSelectionScreen = ({ navigation }) => {
         <View style={styles.line} />
       </View>
 
-      {/* Hastane Butonu */}
+      {/* Hastane Girişi */}
       <TouchableOpacity
         style={styles.buttonSecondary}
         onPress={() => navigation.navigate('HospitalLogin')}
       >
         <Text style={styles.buttonSecondaryText}>Hastane Girişi</Text>
+      </TouchableOpacity>
+
+      {/* Bilgilendirici Sayfa */}
+      <TouchableOpacity
+        style={styles.buttonSecondary}
+        onPress={() => navigation.navigate('BloodDonationInfo')}
+      >
+        <Text style={styles.buttonSecondaryText}>🩸Bir Damla Bir Umut</Text>
       </TouchableOpacity>
 
       {/* Alt bilgi */}
@@ -58,9 +72,9 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(143, 17, 17, 0.1)', // Beyaz %10 saydamlık
+    backgroundColor: 'rgba(143, 17, 17, 0.1)',
     zIndex: 1,
-    pointerEvents: 'none',  // Burayı ekledik, tıklamalar overlay tarafından engellenmesin diye
+    pointerEvents: 'none',
   },
   logo: {
     fontSize: 34,
@@ -73,9 +87,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#333',
+    color: '#fff',
     marginBottom: 30,
     zIndex: 2,
+    textShadowColor: '#c0392b',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   button: {
     backgroundColor: '#fff',
@@ -95,7 +112,7 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   buttonSecondary: {
-    backgroundColor: '#fff', 
+    backgroundColor: '#fff',
     paddingVertical: 14,
     paddingHorizontal: 30,
     borderRadius: 12,
@@ -106,7 +123,7 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   buttonSecondaryText: {
-    color: '#e74c3c', 
+    color: '#e74c3c',
     fontSize: 17,
     fontWeight: '600',
     zIndex: 2,
@@ -120,18 +137,18 @@ const styles = StyleSheet.create({
   line: {
     flex: 1,
     height: 1,
-    backgroundColor: '#ddd',
+    backgroundColor: '#fff',
   },
   separatorText: {
     marginHorizontal: 10,
-    color: '#ff',
+    color: '#fff',
     fontSize: 14,
     zIndex: 2,
   },
   tagline: {
     marginTop: 12,
     fontSize: 14,
-    color: '#ff',
+    color: '#fff',
     textAlign: 'center',
     zIndex: 2,
   },

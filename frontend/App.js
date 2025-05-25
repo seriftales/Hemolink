@@ -12,6 +12,7 @@ import HospitalHomeScreen from './screens/HospitalHomeScreen';
 import HospitalRequestsScreen from './screens/HospitalRequestsScreen';
 import CreateBloodRequestScreen from './screens/CreateBloodRequestScreen';
 import BloodRequestListScreen from './screens/BloodRequestListScreen';
+import BloodDonationInfoScreen from './screens/BloodDonationInfoScreen';
 import { AuthProvider } from './context/AuthContext';
 
 const Stack = createNativeStackNavigator();
@@ -24,6 +25,7 @@ export default function App() {
           <Stack.Screen name="LoginSelection" component={LoginSelectionScreen} />
           <Stack.Screen name="DonorLogin" component={DonorLoginScreen} />
           <Stack.Screen name="HospitalLogin" component={HospitalLoginScreen} />
+          <Stack.Screen name="BloodDonationInfo" component={BloodDonationInfoScreen} />
           <Stack.Screen name="Register" component={RegisterScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="BloodRequests" component={BloodRequestListScreen} />
