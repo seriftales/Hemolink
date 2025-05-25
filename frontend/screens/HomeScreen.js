@@ -66,7 +66,7 @@ const HomeScreen = ({ navigation, route }) => {
             style={styles.button}
             onPress={sendTestNotification}
           >
-            <Text style={styles.buttonText}>Test Bildirimi Gönder</Text>
+            
           </TouchableOpacity>
         </View>
       </View>
