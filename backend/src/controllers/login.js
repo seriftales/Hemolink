@@ -15,11 +15,7 @@ const loginUser = async (req, res) => {
     let result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     let userType = 'user';
      
-    // Eğer users tablosunda bulunamazsa, hospitals tablosunda ara
-    if (!result.rows[0]) {
-      result = await pool.query('SELECT * FROM hospitals WHERE email = $1', [email]);
-      userType = 'hospital';
-    }
+ 
 
     if (!result.rows[0]) {
       return res.status(401).json({ message: 'Geçersiz email veya şifre' });
