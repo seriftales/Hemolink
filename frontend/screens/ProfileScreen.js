@@ -1,24 +1,41 @@
-// ProfileScreen.js — Arka plan görselli, şık tasarım
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  ImageBackground,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
-
-const mockDonations = [
-  { id: 1, date: '12.05.2024', hospital: 'Acıbadem' },
-  { id: 2, date: '08.03.2024', hospital: 'Medipol' },
-];
+import { fetchDonationsByEmail } from '../services/api';
 
 const ProfileScreen = ({ route, navigation }) => {
   const user = route.params?.user;
+  console.log('Profil Ekranı gelen user:', user);
+  const [donations, setDonations] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const handleLogout = () => {
     navigation.navigate('LoginSelection');
+  };
+
+  useEffect(() => {
+    if (user?.email) {
+      loadDonations();
+    }
+  }, [user]);
+
+  const loadDonations = async () => {
+    console.log(user.email);
+    try {
+      const data = await fetchDonationsByEmail(user.email);
+      setDonations(data);
+    } catch (error) {
+      Alert.alert('Hata', 'Bağış geçmişi alınamadı: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!user) {
@@ -33,15 +50,10 @@ const ProfileScreen = ({ route, navigation }) => {
   }
 
   return (
-    <ImageBackground
-      source={require('../assets/tema3.png')} // 🔥 Sadece arka plan
-      style={styles.background}
-      resizeMode="cover"
-    >
-      <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView style={styles.scrollContainer}>
+      <View style={styles.container}>
         <Text style={styles.header}>Profilim</Text>
 
-        {/* 👤 Kullanıcı Bilgileri */}
         <View style={styles.card}>
           <Info label="Ad Soyad" value={`${user.name} ${user.surname || ''}`} />
           <Info label="Email" value={user.email} />
@@ -57,18 +69,22 @@ const ProfileScreen = ({ route, navigation }) => {
           />
         </View>
 
-        {/* 🩸 Bağış Geçmişi */}
         <Text style={styles.subHeader}>Bağış Geçmişi</Text>
-        {mockDonations.length > 0 ? (
+
+        {loading ? (
+          <ActivityIndicator size="large" color="#e74c3c" />
+        ) : donations.length > 0 ? (
           <View style={styles.table}>
             <View style={styles.tableHeader}>
               <Text style={styles.tableHeaderText}>Tarih</Text>
               <Text style={styles.tableHeaderText}>Hastane</Text>
             </View>
-            {mockDonations.map((donation) => (
+            {donations.map((donation) => (
               <View key={donation.id} style={styles.tableRow}>
-                <Text style={styles.tableCell}>{donation.date}</Text>
-                <Text style={styles.tableCell}>{donation.hospital}</Text>
+                <Text style={styles.tableCell}>
+                  {new Date(donation.created_at).toLocaleDateString('tr-TR')}
+                </Text>
+                <Text style={styles.tableCell}>{donation.hospital_name}</Text>
               </View>
             ))}
           </View>
@@ -79,8 +95,8 @@ const ProfileScreen = ({ route, navigation }) => {
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutText}>Çıkış Yap</Text>
         </TouchableOpacity>
-      </ScrollView>
-    </ImageBackground>
+      </View>
+    </ScrollView>
   );
 };
 
@@ -92,56 +108,48 @@ const Info = ({ label, value }) => (
 );
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
+  scrollContainer: {
+    backgroundColor: '#fdfdfd',
   },
   container: {
-    flexGrow: 1,
-    alignItems: 'center',
+    flex: 1,
     padding: 20,
     paddingBottom: 60,
+    alignItems: 'center',
   },
   header: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#e74c3c',
     marginBottom: 20,
-    textShadowColor: '#c0392b',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
   },
   card: {
-    backgroundColor: 'rgba(255,255,255,0.95)',
+    backgroundColor: '#fff',
     width: '100%',
     padding: 20,
-    borderRadius: 16,
+    borderRadius: 12,
     elevation: 5,
     marginBottom: 30,
   },
   label: {
     fontSize: 15,
-    color: '#555',
+    color: '#666',
   },
   value: {
     fontSize: 17,
     fontWeight: '600',
-    color: '#2c3e50',
+    color: '#333',
   },
   subHeader: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#c0392b',
     alignSelf: 'flex-start',
     marginBottom: 10,
-    textShadowColor: '#c0392b',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
   },
   table: {
     width: '100%',
-    backgroundColor: 'rgba(255,255,255,0.95)',
+    backgroundColor: '#fff',
     borderRadius: 8,
     overflow: 'hidden',
     marginBottom: 24,
@@ -170,7 +178,7 @@ const styles = StyleSheet.create({
   },
   noData: {
     fontSize: 14,
-    color: '#fff',
+    color: '#888',
     marginBottom: 20,
   },
   logoutButton: {
