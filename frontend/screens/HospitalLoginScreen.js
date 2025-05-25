@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 24,
-    paddingTop: 100, // 👈 BU satırı ekle! (40 = hafif kayma)
+    paddingTop: 100, 
     backgroundColor: 'rgba(255, 255, 255, 0.0)',
   },
   title: {

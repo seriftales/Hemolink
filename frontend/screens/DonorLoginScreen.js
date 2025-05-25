@@ -14,7 +14,7 @@ const DonorLoginScreen = ({ navigation }) => {
     try {
       const data = await loginReq(email, password);
       console.log('Login data:', data);
-      navigation.navigate('Home', { user: data.user }); // ✅ user'ı gönder
+      navigation.navigate('Home', { user: data.user }); 
     } catch (error) {
       console.log('Login error:', error);
       Alert.alert('Giriş Başarısız', 'Lütfen bilgilerinizi kontrol edin.');
@@ -29,7 +29,7 @@ const DonorLoginScreen = ({ navigation }) => {
     >
       <View style={styles.container}>
       
-        {/* 📥 Giriş Alanları */}
+        
         <FormInput
           placeholder="Email"
           value={email}
@@ -42,12 +42,12 @@ const DonorLoginScreen = ({ navigation }) => {
           secureTextEntry
         />
 
-        {/* 🔘 Giriş Butonu */}
+        
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Giriş Yap</Text>
         </TouchableOpacity>
 
-        {/* 🟰 Kayıt Butonu */}
+        
         <TouchableOpacity
           style={styles.buttonSecondary}
           onPress={() => navigation.navigate('Register')}

@@ -1,4 +1,4 @@
-// LoginSelectionScreen.js — Güncellenmiş Tam Hali
+
 import React from 'react';
 import {
   View,
@@ -13,10 +13,10 @@ import backgroundImage from '../assets/blood-drop.png';
 const LoginSelectionScreen = ({ navigation }) => {
   return (
     <ImageBackground source={backgroundImage} style={styles.container} resizeMode="cover">
-      {/* Üstüne saydam overlay */}
+      
       <View style={styles.overlay} />
 
-      {/* Arka planda emoji watermark */}
+      
       <Text style={styles.watermark}>🩸</Text>
 
       {/* Logo */}
