@@ -7,6 +7,8 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  Image,
+  ImageBackground, // <-- eklendi
 } from 'react-native';
 import { fetchDonationsByEmail } from '../services/api';
 
@@ -40,63 +42,75 @@ const ProfileScreen = ({ route, navigation }) => {
 
   if (!user) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.header}>Profil Bilgisi Yüklenemedi</Text>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutText}>Giriş Ekranına Dön</Text>
-        </TouchableOpacity>
-      </View>
+      <ImageBackground
+        source={require('../assets/tema3.png')}
+        style={styles.background}
+        resizeMode="cover"
+      >
+        <View style={styles.container}>
+          <Text style={styles.header}>Profil Bilgisi Yüklenemedi</Text>
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <Text style={styles.logoutText}>Giriş Ekranına Dön</Text>
+          </TouchableOpacity>
+        </View>
+      </ImageBackground>
     );
   }
 
   return (
-    <ScrollView style={styles.scrollContainer}>
-      <View style={styles.container}>
-        <Text style={styles.header}>Profilim</Text>
+    <ImageBackground
+      source={require('../assets/tema3.png')}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <ScrollView style={styles.scrollContainer}>
+        <View style={styles.container}>
+          <Text style={styles.header}>Profilim</Text>
 
-        <View style={styles.card}>
-          <Info label="Ad Soyad" value={`${user.name} ${user.surname || ''}`} />
-          <Info label="Email" value={user.email} />
-          <Info label="Yaş" value={user.age || '-'} />
-          <Info label="Kan Grubu" value={user.blood_type || '-'} />
-          <Info
-            label="Kayıt Tarihi"
-            value={
-              user.created_at
-                ? new Date(user.created_at).toLocaleDateString('tr-TR')
-                : '-'
-            }
-          />
-        </View>
-
-        <Text style={styles.subHeader}>Bağış Geçmişi</Text>
-
-        {loading ? (
-          <ActivityIndicator size="large" color="#e74c3c" />
-        ) : donations.length > 0 ? (
-          <View style={styles.table}>
-            <View style={styles.tableHeader}>
-              <Text style={styles.tableHeaderText}>Tarih</Text>
-              <Text style={styles.tableHeaderText}>Hastane</Text>
-            </View>
-            {donations.map((donation) => (
-              <View key={donation.id} style={styles.tableRow}>
-                <Text style={styles.tableCell}>
-                  {new Date(donation.created_at).toLocaleDateString('tr-TR')}
-                </Text>
-                <Text style={styles.tableCell}>{donation.hospital_name}</Text>
-              </View>
-            ))}
+          <View style={styles.card}>
+            <Info label="Ad Soyad" value={`${user.name} ${user.surname || ''}`} />
+            <Info label="Email" value={user.email} />
+            <Info label="Yaş" value={user.age || '-'} />
+            <Info label="Kan Grubu" value={user.blood_type || '-'} />
+            <Info
+              label="Kayıt Tarihi"
+              value={
+                user.created_at
+                  ? new Date(user.created_at).toLocaleDateString('tr-TR')
+                  : '-'
+              }
+            />
           </View>
-        ) : (
-          <Text style={styles.noData}>Henüz bağış yapılmamış.</Text>
-        )}
 
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutText}>Çıkış Yap</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+          <Text style={styles.subHeader}>Bağış Geçmişi</Text>
+
+          {loading ? (
+            <ActivityIndicator size="large" color="#e74c3c" />
+          ) : donations.length > 0 ? (
+            <View style={styles.table}>
+              <View style={styles.tableHeader}>
+                <Text style={styles.tableHeaderText}>Tarih</Text>
+                <Text style={styles.tableHeaderText}>Hastane</Text>
+              </View>
+              {donations.map((donation) => (
+                <View key={donation.id} style={styles.tableRow}>
+                  <Text style={styles.tableCell}>
+                    {new Date(donation.created_at).toLocaleDateString('tr-TR')}
+                  </Text>
+                  <Text style={styles.tableCell}>{donation.hospital_name}</Text>
+                </View>
+              ))}
+            </View>
+          ) : (
+            <Text style={styles.noData}>Henüz bağış yapılmamış.</Text>
+          )}
+
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <Text style={styles.logoutText}>Çıkış Yap</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </ImageBackground>
   );
 };
 
@@ -108,8 +122,13 @@ const Info = ({ label, value }) => (
 );
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
   scrollContainer: {
-    backgroundColor: '#fdfdfd',
+    backgroundColor: 'rgba(255,255,255,0.1)',
   },
   container: {
     flex: 1,

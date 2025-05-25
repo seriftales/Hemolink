@@ -1,4 +1,3 @@
-// 🔥 Bu kod, birebir senin beğendiğin tasarımı oluşturur — optimize edilmiş kart boyutu ve arka plan görünürlüğü
 import React from 'react';
 import {
   View,
@@ -29,7 +28,7 @@ const HospitalHomeScreen = ({ route, navigation }) => {
 
   return (
     <ImageBackground
-      source={require('../assets/backgroundOfHospitalHomeScreen.png')} // 👈 Buraya senin tam istediğin arka plan görseli gelecek
+      source={require('../assets/backgroundOfProfile.png')} // 
       style={styles.background}
       resizeMode="cover"
     >
