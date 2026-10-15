@@ -20,7 +20,7 @@ Sistemi ayağa kaldırmak için aşağıdaki yazılımların sisteminizde kurulu
 Backend servisini ayağa kaldırmak için backend/src dizininde işlem yapılmalıdır.
 
 ### 1. Çevre Değişkenlerinin (.env) Oluşturulması
-Backend kök dizininde (package.json dosyasının bulunduğu yer) bir .env dosyası oluşturun ve aşağıdaki değişkenleri ekleyin:
+Backend kök dizininde bir .env dosyası oluşturun ve aşağıdaki değişkenleri ekleyin:
 ```bash 
 PORT=5000
 DB_USER=postgres
@@ -31,7 +31,7 @@ DB_PORT=5432
 JWT_SECRET=anahtar
 JWT_EXPIRES_IN=7d
 ```
-### 2. Veritabanı Yapılandırması (PostgreSQL)
+### 2. Veritabanı Yapılandırması 
 
 Uygulamanın çalışabilmesi için veritabanı ve kullanıcının doğru yapılandırılmış olması gerekir.
 
