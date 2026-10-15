@@ -5,9 +5,9 @@ HemoLink, kan bağışçıları ile hastaneleri veya bağış merkezlerini bir a
 ## Özellikler 
 HemoLink, modüler ve genişletilebilir bir sistem mimarisine sahiptir.
 
-Frontend : React Native ve Expo altyapısıyla geliştirilmiştir. Kullanıcı oturumları ve sayfa yönlendirmeleri Context API üzerinden merkezi olarak yönetilmektedir.Backend istekleri de api.js den yonetilmektedir.
+**Frontend :** React Native ve Expo altyapısıyla geliştirilmiştir. Kullanıcı oturumları ve sayfa yönlendirmeleri Context API üzerinden merkezi olarak yönetilmektedir.Backend istekleri de api.js den yonetilmektedir.
 
-Backend : Node.js ve Express ile inşa edilmiştir.Güvenlik JWT tabanlı yetkilendirme ile sağlanırken veri kalıcılığı güçlü ilişkisel veritabanı PostgreSQL üzerinden yürütülmektedir.
+**Backend :** Node.js ve Express ile inşa edilmiştir.Güvenlik JWT tabanlı yetkilendirme ile sağlanırken veri kalıcılığı güçlü ilişkisel veritabanı PostgreSQL üzerinden yürütülmektedir.
 
 ## Gereksinimler 
 Sistemi ayağa kaldırmak için aşağıdaki yazılımların sisteminizde kurulu olması gerekmektedir:
