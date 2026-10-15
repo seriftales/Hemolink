@@ -53,7 +53,7 @@ npm install express pg jsonwebtoken cors dotenv axios bcrypt
 ```
 Not:Geliştirme sürecini hızlandırmak için npm install -D nodemon kurabilirsiniz. Böylece her kod değişiminde sunucuyu manuel yeniden başlatmak zorunda kalmazsınız.
 
-### 4. Veritabanı İnşası (Migration & Seeding)
+### 4. Veritabanı İnşası 
 Tabloları oluşturmak ve test verilerini eklemek için kurulum betiğini çalıştırın:
 ```bash
 node database/setup.js
@@ -109,7 +109,7 @@ Ubuntu'nun yeni güvenlik politikaları Expo DevTools'u engellediğinde:
 sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
 npx expo start -c
 ```
-## Teknik Borçlar (TODO)
+## Teknik Borçlar
 **Harita Entegrasyonu:** react-native-maps için Google Maps API entegrasyonu tamamlanacak. 
 **Bildirim Sistemi:** Bildirim sistemi eklenmesi gerekmektedir.
 
