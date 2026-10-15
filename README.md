@@ -79,6 +79,7 @@ npx expo start
 
 ### 2. Sık Karşılaşılan Hatalar ve Çözümleri
 **Hata 1 : Genel npm Kurulum Hataları**
+
 Temiz bir kurulum için:
 ```bash
 rm -rf node_modules package-lock.json
@@ -99,6 +100,7 @@ npx expo start -c
 ```
 
 **Hata 3: Beyaz Ekran veya Paket Eksikliği**
+
 Gerekli temel paketlerin yüklü olduğundan emin olun:
 ```bash
 npx expo install @react-native-async-storage/async-storage axios
