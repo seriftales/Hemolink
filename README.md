@@ -102,17 +102,21 @@ npx expo start -c
 **Hata 3: Beyaz Ekran veya Paket Eksikliği**
 
 Gerekli temel paketlerin yüklü olduğundan emin olun:
+
 ```bash
 npx expo install @react-native-async-storage/async-storage axios
 ```
 **Hata 4: Ubuntu 24.04 AppArmor FATAL Crash**
+
 Ubuntu'nun yeni güvenlik politikaları Expo DevTools'u engellediğinde:
+
 ```bash
 sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
 npx expo start -c
 ```
 ## Teknik Borçlar
 **Harita Entegrasyonu:** react-native-maps için Google Maps API entegrasyonu tamamlanacak. 
+
 **Bildirim Sistemi:** Bildirim sistemi eklenmesi gerekmektedir.
 
 ## Dizin Yapısı 
