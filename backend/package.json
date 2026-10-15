@@ -4,18 +4,26 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
-      "type": "git",
-      "url": "git+https://github.com/Onedirl/hemolink-419.git"
+        "type": "git",
+        "url": "git+https://github.com/Onedirl/hemolink-419.git"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "bugs": {
-      "url": "https://github.com/Onedirl/hemolink-419/issues"
+        "url": "https://github.com/Onedirl/hemolink-419/issues"
     },
-    "homepage": "https://github.com/Onedirl/hemolink-419#readme"
-  }
-  
+    "homepage": "https://github.com/Onedirl/hemolink-419#readme",
+    "dependencies": {
+        "axios": "^1.20.0",
+        "bcrypt": "^6.0.0",
+        "cors": "^2.8.6",
+        "dotenv": "^18.0.7",
+        "express": "^5.3.0",
+        "jsonwebtoken": "^9.0.3",
+        "pg": "^8.23.1"
+    }
+}

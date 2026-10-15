@@ -1,11 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const Card = ({ title, content }) => {
+const Card = ({ title, children, style }) => {
   return (
-    <View style={styles.card}>
-      <Text style={styles.cardTitle}>{title}</Text>
-      <Text style={styles.cardContent}>{content}</Text>
+    <View style={[styles.card, style]}>
+      {title && <Text style={styles.cardTitle}>{title}</Text>}
+      {}
+      {children} 
     </View>
   );
 };
@@ -26,9 +27,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
-  },
-  cardContent: {
-    fontSize: 16,
   },
 });
 

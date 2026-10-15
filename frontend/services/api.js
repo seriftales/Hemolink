@@ -1,10 +1,8 @@
-const BASE_URL = 'http://192.168.28.254:3000';
+const BASE_URL = 'http://192.168.142.254:5000/api/v1';
 // kendi IP ve portuna göre ayarla
 
 const loginReq = async (email, password) => {
   try {
-    console.log('Login attempt started');
-    console.log('Sending request to:', `${BASE_URL}/login`);
     
     const response = await fetch(`${BASE_URL}/login`, {
       method: 'POST',
@@ -15,10 +13,7 @@ const loginReq = async (email, password) => {
       body: JSON.stringify({ email, password }),
     });
 
-    console.log('Response received:', response.status);
-    
     const data = await response.json();
-    console.log('Response data:', data);
 
     if (!response.ok) {
       throw new Error(data.message || 'Giriş başarısız');
@@ -34,7 +29,6 @@ const loginReq = async (email, password) => {
 
 const registerReq = async (name, surname, email, password, age, bloodType) => {
   try {
-    // Debug için request body'yi yazdır
     const requestBody = { 
       name, 
       surname, 
@@ -43,7 +37,6 @@ const registerReq = async (name, surname, email, password, age, bloodType) => {
       age: parseInt(age), // age'i number'a çevir
       bloodType // bloodType'ı olduğu gibi gönder
     };
-    console.log('Register Request Body:', requestBody);
 
     const response = await fetch(`${BASE_URL}/register`, {
       method: 'POST',
@@ -55,7 +48,6 @@ const registerReq = async (name, surname, email, password, age, bloodType) => {
     });
 
     const data = await response.json();
-    console.log('Register Response:', data);
 
     if (!response.ok) {
       throw new Error(data.message || 'Kayıt başarısız');
@@ -110,7 +102,6 @@ const createReq = async (name,id,bloodType,urgencyLevel) => {
       bloodType,
       urgencyLevel
     };
-    console.log('Create Request Body:', requestBody);
 
     const response = await fetch(`${BASE_URL}/create`, {
       method: 'POST',
@@ -122,7 +113,6 @@ const createReq = async (name,id,bloodType,urgencyLevel) => {
     });
 
     const data = await response.json();
-    console.log('Create Response:', data);
 
     if (!response.ok) {
       throw new Error(data.message || 'Talep başarısız');
@@ -137,7 +127,7 @@ const createReq = async (name,id,bloodType,urgencyLevel) => {
 };
  const fetchRequests = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/request`, {
+    const response = await fetch(`${BASE_URL}/request/donor`, {
       headers: {
         'Accept': 'application/json',
       },
@@ -162,7 +152,6 @@ const updateRequestStatus = async (id, status,userEmail) => {
     status ,
     userEmail
   } 
-  console.log(updateBody)
   const response = await fetch(`${BASE_URL}/update`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
@@ -179,7 +168,6 @@ const updateRequestStatus2 = async (id, status) => {
     id,
     status 
   } 
-  console.log(updateBody)
   const response = await fetch(`${BASE_URL}/update2`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
@@ -193,7 +181,6 @@ const updateRequestStatus2 = async (id, status) => {
 const deleteRequest = async (id) => {
   
   const deleteBody = { id };
-  console.log('Delete Request Body:', deleteBody);
   try {
     const response = await fetch(`${BASE_URL}/delete`, {
       method: 'DELETE',
@@ -213,8 +200,6 @@ const fetchDonationsByEmail = async (email) => {
 
   const fetchBody = {email} 
 
-  console.log(fetchBody) ; 
-
   const response = await fetch (`${BASE_URL}/donations`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -226,7 +211,6 @@ const fetchDonationsByEmail = async (email) => {
 
 const getPhones = async (hospitalIds) => {
   
-  console.log(hospitalIds) ; 
   const response = await fetch(`${BASE_URL}/phones`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -234,9 +218,6 @@ const getPhones = async (hospitalIds) => {
   });
   return await response.json(); // [{ hospital_id: 1, phone: '555-1234' }, ...]
 };
-
-
-
 
 export { 
   loginReq, 

@@ -1,83 +1,86 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+
+const API_URL = 'http://192.168.142.254:5000/api/v1'; 
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); 
+  const [isActionLoading, setIsActionLoading] = useState(false); 
+
+  useEffect(() => {
+    const bootstrapAsync = async () => {
+      try {
+        const storedUser = await AsyncStorage.getItem('userInfo');
+        const userToken = await AsyncStorage.getItem('userToken');
+
+        if (storedUser && userToken) {
+          try {
+            const parsedUser = JSON.parse(storedUser);
+            setUser(parsedUser);
+          } catch (parseError) {
+            console.error('Bozuk JSON tespit edildi, hafıza temizleniyor...', parseError);
+            await AsyncStorage.removeItem('userInfo');
+            await AsyncStorage.removeItem('userToken');
+            setUser(null);
+          }
+        }
+      } catch (e) {
+        console.error('Lokal veri okuma hatası:', e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    bootstrapAsync();
+  }, []);
 
   const login = async (email, password) => {
     try {
-      setLoading(true);
-      const response = await fetch('http://localhost:3000/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      setIsActionLoading(true);
+      const response = await axios.post(`${API_URL}/login`, { email, password });
+      
+      const { token, user } = response.data;
+      
+      const loggedInUser = { ...user, type: 'donor' };
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Giriş başarısız');
-      }
-
-      await AsyncStorage.setItem('userToken', data.token);
-      setUser(data.user);
-      return data;
+      await AsyncStorage.setItem('userToken', token);
+      await AsyncStorage.setItem('userInfo', JSON.stringify(loggedInUser));
+      
+      setUser(loggedInUser);
+      return response.data;
     } catch (error) {
-      console.error('Login error:', error);
-      throw error;
+      throw new Error(error.response?.data?.message || 'Giriş başarısız');
     } finally {
-      setLoading(false);
+      setIsActionLoading(false);
     }
   };
 
   const register = async (userData) => {
     try {
-      setLoading(true);
-      const response = await fetch('http://localhost:3000/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Kayıt başarısız');
-      }
-
-      return data;
+      setIsActionLoading(true);
+      const response = await axios.post(`${API_URL}/register`, userData);
+      return response.data;
     } catch (error) {
-      console.error('Register error:', error);
-      throw error;
+      throw new Error(error.response?.data?.message || 'Kayıt başarısız');
     } finally {
-      setLoading(false);
+      setIsActionLoading(false);
     }
   };
 
   const logout = async () => {
     try {
       await AsyncStorage.removeItem('userToken');
+      await AsyncStorage.removeItem('userInfo');
       setUser(null);
     } catch (error) {
       console.error('Logout error:', error);
     }
   };
 
-  const value = {
-    user,
-    loading,
-    login,
-    register,
-    logout,
-  };
-
+  const value = { user, isLoading, isActionLoading, login, register, logout, setUser };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
@@ -87,4 +90,4 @@ export const useAuth = () => {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-}; 
+};

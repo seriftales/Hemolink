@@ -1,0 +1,122 @@
+A.FRONTEND  KURULUM
+
+Frontend Dizinine Geçin:
+
+cd frontend
+
+Bağımlılıkları Kurun:
+
+npm install 
+
+Expoyu Çalıştırın: 
+npx expo start 
+
+not:eğer hata alırsanız temiz kurulum için şu adımları uygulayın 
+
+# 1. Mevcut node_modules ve lock dosyasını silin
+rm -rf node_modules package-lock.json
+
+# 2. Önbelleği temizleyin
+npm cache clean --force
+
+# 3. Bağımlılıkları sıfırdan tekrar kurun
+npm install
+
+not:eğer sürüm hatası alırsanız şu adımları uygulayın
+
+1. Expo Paketini ve Bağımlılıkları SDK 57'e Sabitle
+Terminali aç ve frontend kök dizininde şu komutu çalıştır:
+
+
+npx expo install expo@~57.0.0
+
+2. Uyumsuz Diğer Paketleri Otomatik Düzelt
+SDK sürümünü sabitledikten sonra, diğer kütüphanelerin (react-native, navigation vb.) SDK 53 ile uyumlu sürümlere çekilmesi gerekir. Bunun için Expo'nun otomatik düzeltme aracını çalıştır:
+
+
+npx expo install --fix
+
+3. Önbelleği Temizleyip Yeniden Başlat
+Eski önbellek kalıntılarından kurtulmak için projeyi temiz bir şekilde ayağa kaldır:
+
+
+npx expo start -c
+
+not :beyaz ekran hatası alırsanız
+
+npx expo install @react-native-async-storage/async-storage axios
+
+
+
+Expo SDK 57 ile birlikte, hataları arayüzde daha iyi görebilmen için arka planda React Native DevTools adında bir araç (Electron/Chromium tabanlı bir arayüz) indirmeye ve çalıştırmaya çalışıyor. Ancak Ubuntu 24.04'ün yeni AppArmor güvenlik politikaları (unprivileged user namespaces), Chromium tabanlı araçların "sandbox" (kum havuzu) oluşturmasına izin vermez ve işlemi acımasızca "FATAL" diyerek öldürür.
+
+Ubuntu'nun bu güvenlik kısıtlamasını geçici olarak (bilgisayar kapanana kadar) aşmak için terminale şu komutu gir ve şifreni yaz:
+
+sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+
+Bu komut "0" (başarılı) çıktısı verdikten sonra Expo'yu her zamanki gibi başlat:
+
+Bash
+npx expo start -c 
+
+B.BACKEND KURULUM 
+
+ilk once backend/src dizinine gidin 
+
+cd backend/src
+
+1. Çevre Değişkenlerinin (.env) Oluşturulması
+Backend kök dizininde (yani package.json, app.js ve server.js dosyalarının bulunduğu ana klasörde) .env adında yeni bir dosya oluştur. İçine aşağıdaki satırları yapıştır. DB_PASSWORD karşısına PostgreSQL kurulumunda belirlediğin gerçek şifreni (önceden 'a' olarak kullanıyordun) girmelisin:
+
+Kod snippet'i
+PORT=5000
+DB_USER=postgres
+DB_HOST=localhost
+DB_NAME=hemolink
+DB_PASSWORD=sifre
+DB_PORT=5432
+JWT_SECRET=anahtar
+JWT_EXPIRES_IN=7d
+2. Bağımlılıkların (Dependencies) Kurulumu
+Terminali açıp backend klasörüne gir. package.json dosyasında bulunan ve bizim yeni mimariyle sisteme dahil ettiğimiz modülleri (dotenv, cors, axios vb.) eksiksiz kurmak için şu komutu çalıştır:
+
+Bash
+npm install express pg jsonwebtoken cors dotenv axios bcrypt
+Senior Tavsiyesi: Geliştirme aşamasında her kod değiştirdiğinde sunucuyu manuel kapatıp açmak tam bir zaman kaybıdır. Sisteme npm install -D nodemon komutuyla nodemon aracını kurarsan, dosyayı kaydettiğin an sunucu otomatik olarak yeniden başlar.
+
+3. Veritabanının İnşası (Migration & Seeding)
+Uygulamayı başlatmadan önce tabloların var olduğundan emin olmalıyız. Daha önceki adımda oluşturduğumuz tekil ve güvenli kurulum betiğini çalıştır:
+
+Bash
+node database/setup.js
+
+Terminalde "✅ Veritabanı şeması ve test verileri başarıyla oluşturuldu" yazısını görüyorsan, veritabanı motorun Node.js ile sorunsuz konuşuyor demektir.
+
+4. Backend Motorunu Çalıştırma
+Her şey hazır olduğuna göre, eski iki farklı giriş noktası karmaşasını çözerek yarattığımız tekil sunucu başlatıcıyı (server.js) ayağa kaldırıyoruz:
+
+Bash
+node server.js
+
+2. Veritabanını Oluştur
+Kendi şüphende haklısın. Şifre hatasını çözsek bile PostgreSQL içinde hemolink adında boş bir veritabanı yoksa bağlantı yine reddedilir. Terminalde şu komutu çalıştırarak veritabanı kabuğunu yarat:
+
+Bash
+sudo -u postgres psql -c "CREATE DATABASE hemolink;"
+
+sifre olusturma 
+Ubuntu ortamında varsayılan postgres kullanıcısının şifresini bilmiyorsan veya unuttuysan, terminalden kök (sudo) yetkisiyle veritabanı kabuğuna şifresiz erişip bunu saniyeler içinde sıfırlayabiliriz.
+
+Terminali aç ve doğrudan şu komutu çalıştırarak şifreni örneğin hemolink123 olarak ayarla:
+
+Bash
+sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'hemolink123';"
+İşlem başarılı olduğunda terminalde ALTER ROLE yanıtını göreceksin.
+
+Ardından backend dizinindeki .env dosyanı aç ve şifre satırını az önce belirlediğimiz metinle birebir eşleşecek şekilde güncelle:
+
+Kod snippet'i
+DB_PASSWORD=hemolink123
+
+
+not : harita eklenmedi eklenmesi gerekli 

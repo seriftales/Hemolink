@@ -1,25 +1,23 @@
-const { connectDB } = require('../config/db');
+const { query } = require('../config/db');
 const axios = require('axios');
 
-// Kullanıcının bildirimlerini getir
+// Bildirimleri getir
 const getUserNotifications = async (req, res) => {
   try {
-    const userId = req.user.id; // JWT'den gelen kullanıcı ID'si
-    const db = await connectDB();
+    const userId = req.user.id; 
     
-    const result = await db.query(
+    const result = await query(
       'SELECT * FROM notifications WHERE recipient_type = $1 AND recipient_id = $2 ORDER BY created_at DESC',
       ['user', userId]
     );
     
     res.json(result.rows);
   } catch (error) {
-    console.error('Bildirimler getirilirken hata:', error);
     res.status(500).json({ message: 'Bildirimler getirilirken bir hata oluştu' });
   }
 };
 
-// Expo Push Notification gönder
+// Push bildirimi gönder
 const sendPushNotification = async (pushToken, title, body) => {
   try {
     const message = {
@@ -36,14 +34,12 @@ const sendPushNotification = async (pushToken, title, body) => {
   }
 };
 
-// Kan talebi için bildirim gönder
+// Kan talebi bildir
 const sendBloodRequestNotification = async (req, res) => {
   try {
     const { hospitalId, bloodType, requestId } = req.body;
-    const db = await connectDB();
 
-    // Hastane bilgilerini al
-    const hospitalResult = await db.query(
+    const hospitalResult = await query(
       'SELECT name FROM hospitals WHERE id = $1',
       [hospitalId]
     );
@@ -54,8 +50,7 @@ const sendBloodRequestNotification = async (req, res) => {
 
     const hospitalName = hospitalResult.rows[0].name;
 
-    // Aynı kan grubuna sahip kullanıcıları bul
-    const usersResult = await db.query(
+    const usersResult = await query(
       'SELECT id, push_token FROM users WHERE blood_type = $1 AND push_token IS NOT NULL',
       [bloodType]
     );
@@ -64,10 +59,8 @@ const sendBloodRequestNotification = async (req, res) => {
       return res.status(404).json({ message: 'Bu kan grubuna sahip bağışçı bulunamadı' });
     }
 
-    // Her kullanıcıya bildirim gönder
     for (const user of usersResult.rows) {
-      // Veritabanına kaydet
-      await db.query(
+      await query(
         `INSERT INTO notifications 
         (recipient_type, recipient_id, title, message, type, related_entity_type, related_entity_id) 
         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
@@ -82,7 +75,6 @@ const sendBloodRequestNotification = async (req, res) => {
         ]
       );
 
-      // Push notification gönder
       if (user.push_token) {
         await sendPushNotification(
           user.push_token,
@@ -98,19 +90,17 @@ const sendBloodRequestNotification = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Bildirim gönderilirken hata:', error);
     res.status(500).json({ message: 'Bildirimler gönderilirken bir hata oluştu' });
   }
 };
 
-// Bildirimi okundu olarak işaretle
+// Bildirimi okundu yap
 const markNotificationAsRead = async (req, res) => {
   try {
     const { notificationId } = req.params;
     const userId = req.user.id;
-    const db = await connectDB();
     
-    const result = await db.query(
+    const result = await query(
       'UPDATE notifications SET is_read = true WHERE id = $1 AND recipient_type = $2 AND recipient_id = $3 RETURNING *',
       [notificationId, 'user', userId]
     );
@@ -121,43 +111,38 @@ const markNotificationAsRead = async (req, res) => {
     
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Bildirim güncellenirken hata:', error);
     res.status(500).json({ message: 'Bildirim güncellenirken bir hata oluştu' });
   }
 };
 
-// Tüm bildirimleri okundu olarak işaretle
+// Tümünü okundu yap
 const markAllNotificationsAsRead = async (req, res) => {
   try {
     const userId = req.user.id;
-    const db = await connectDB();
     
-    const result = await db.query(
+    const result = await query(
       'UPDATE notifications SET is_read = true WHERE recipient_type = $1 AND recipient_id = $2 RETURNING *',
       ['user', userId]
     );
     
     res.json({ message: `${result.rowCount} bildirim okundu olarak işaretlendi` });
   } catch (error) {
-    console.error('Bildirimler güncellenirken hata:', error);
     res.status(500).json({ message: 'Bildirimler güncellenirken bir hata oluştu' });
   }
 };
 
-// Okunmamış bildirim sayısını getir
+// Okunmamış sayısını getir
 const getUnreadNotificationCount = async (req, res) => {
   try {
     const userId = req.user.id;
-    const db = await connectDB();
     
-    const result = await db.query(
+    const result = await query(
       'SELECT COUNT(*) FROM notifications WHERE recipient_type = $1 AND recipient_id = $2 AND is_read = false',
       ['user', userId]
     );
     
     res.json({ count: parseInt(result.rows[0].count) });
   } catch (error) {
-    console.error('Okunmamış bildirim sayısı getirilirken hata:', error);
     res.status(500).json({ message: 'Okunmamış bildirim sayısı getirilirken bir hata oluştu' });
   }
 };
@@ -166,10 +151,8 @@ const getUnreadNotificationCount = async (req, res) => {
 const sendTestNotification = async (req, res) => {
   try {
     const { userId } = req.params;
-    const db = await connectDB();
 
-    // Kullanıcıyı bul
-    const userResult = await db.query(
+    const userResult = await query(
       'SELECT * FROM users WHERE id = $1',
       [userId]
     );
@@ -180,8 +163,7 @@ const sendTestNotification = async (req, res) => {
 
     const user = userResult.rows[0];
 
-    // Bildirimi veritabanına kaydet
-    await db.query(
+    await query(
       `INSERT INTO notifications 
       (recipient_type, recipient_id, title, message, type) 
       VALUES ($1, $2, $3, $4, $5)`,
@@ -194,7 +176,6 @@ const sendTestNotification = async (req, res) => {
       ]
     );
 
-    // Push notification gönder
     if (user.push_token) {
       await sendPushNotification(
         user.push_token,
@@ -213,7 +194,6 @@ const sendTestNotification = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Test bildirimi gönderme hatası:', error);
     res.status(500).json({ message: 'Test bildirimi gönderilirken bir hata oluştu' });
   }
 };
@@ -225,4 +205,4 @@ module.exports = {
   markAllNotificationsAsRead,
   getUnreadNotificationCount,
   sendTestNotification
-}; 
+};

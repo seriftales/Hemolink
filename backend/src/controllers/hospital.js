@@ -1,6 +1,8 @@
-// Haversine formülü ile iki nokta arası mesafeyi hesapla (km cinsinden)
+const { query } = require('../config/db');
+
+// Mesafe hesapla
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
-  const R = 6371; // Dünya'nın yarıçapı (km)
+  const R = 6371;
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLon = (lon2 - lon1) * Math.PI / 180;
   const a = 
@@ -11,64 +13,35 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
   return R * c;
 };
 
-// Tüm hastaneleri getir
+// Hastaneleri listele
 const getHospitals = async (req, res) => {
   try {
-    const pool = req.app.locals.pool;
-    if (!pool) {
-      throw new Error('Veritabanı bağlantısı bulunamadı');
-    }
-
-    const result = await pool.query('SELECT * FROM hospitals');
+    const result = await query('SELECT * FROM hospitals');
     res.json(result.rows);
   } catch (error) {
-    console.error('Get hospitals error:', error);
     res.status(500).json({ message: error.message || 'Hastaneler alınamadı' });
   }
 };
 
-// Yakındaki hastaneleri bul
+// Yakın hastaneleri bul
 const getNearbyHospitals = async (req, res) => {
   try {
-    const { latitude, longitude, radius = 10 } = req.query; // radius km cinsinden, varsayılan 10km
+    const { latitude, longitude, radius = 10 } = req.query;
+    if (!latitude || !longitude) return res.status(400).json({ message: 'Konum bilgisi gerekli' });
 
-    if (!latitude || !longitude) {
-      return res.status(400).json({ message: 'Konum bilgisi gerekli' });
-    }
-
-    const pool = req.app.locals.pool;
-    if (!pool) {
-      throw new Error('Veritabanı bağlantısı bulunamadı');
-    }
-
-    // Tüm hastaneleri al
-    const result = await pool.query('SELECT * FROM hospitals');
-    const hospitals = result.rows;
-
-    // Mesafeye göre filtrele
-    const nearbyHospitals = hospitals
+    const result = await query('SELECT * FROM hospitals');
+    const nearbyHospitals = result.rows
       .map(hospital => ({
         ...hospital,
-        distance: calculateDistance(
-          parseFloat(latitude),
-          parseFloat(longitude),
-          parseFloat(hospital.latitude),
-          parseFloat(hospital.longitude)
-        )
+        distance: calculateDistance(parseFloat(latitude), parseFloat(longitude), parseFloat(hospital.latitude), parseFloat(hospital.longitude))
       }))
       .filter(hospital => hospital.distance <= radius)
       .sort((a, b) => a.distance - b.distance);
 
-    res.json({
-      hospitals: nearbyHospitals,
-      count: nearbyHospitals.length,
-      radius: radius
-    });
-
+    res.json({ hospitals: nearbyHospitals, count: nearbyHospitals.length, radius });
   } catch (error) {
-    console.error('Nearby hospitals error:', error);
     res.status(500).json({ message: error.message || 'Yakındaki hastaneler alınamadı' });
   }
 };
 
-module.exports = { getHospitals, getNearbyHospitals }; 
+module.exports = { getHospitals, getNearbyHospitals };

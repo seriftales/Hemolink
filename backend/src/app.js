@@ -1,48 +1,23 @@
-//app.js
 const express = require('express');
-const { connectDB } = require('./config/db');
-const authRoute = require('./routes/routes.js');
+const cors = require('cors');
+const routes = require('./routes/routes');
 
 const app = express();
 
-// Middleware
+// Middlewares
+app.use(cors()); 
 app.use(express.json());
 
-// Routes
-app.use('/', authRoute);
+// Routes 
+app.use('/api/v1', routes);
 
-// Global pool variable
-let pool;
-
-// Start server
-const startServer = async () => {
-  try {
-    // Connect to database
-    pool = await connectDB();
-    console.log('Veritabanına bağlanıldı');
-
-    // Make pool available globally
-    app.locals.pool = pool;
-
-    // Start server
-    const PORT = 3000;
-    app.listen(PORT, () => {
-      console.log(`Sunucu ${PORT} portunda çalışıyor`);
-    });
-  } catch (error) {
-    console.error('Sunucu başlatma hatası:', error);
-    process.exit(1);
-  }
-};
-
-// Handle process termination
-process.on('SIGINT', async () => {
-  if (pool) {
-    await pool.end();
-    console.log('Veritabanı bağlantısı kapatıldı');
-  }
-  process.exit(0);
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error("Sistem Hatası:", err.stack);
+  res.status(500).json({ 
+    success: false, 
+    message: 'Sunucu tarafında beklenmeyen bir hata oluştu.' 
+  });
 });
 
-startServer();
-  
+module.exports = app;

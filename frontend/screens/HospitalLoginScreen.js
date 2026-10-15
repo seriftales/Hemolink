@@ -1,92 +1,70 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ImageBackground,
-  Alert,
-} from 'react-native';
+import { View, StyleSheet, ImageBackground, Alert, ActivityIndicator } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Hafızaya yazmak için ekledik
 import FormInput from '../components/FormInput';
+import Button from '../components/Button';
 import { hospitalLoginReq } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const HospitalLoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  
+
+  const { setUser } = useAuth(); 
 
   const handleHospitalLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Uyarı', 'Lütfen tüm alanları doldurun.');
+      return;
+    }
+
     try {
-      const data = await hospitalLoginReq(email, password);
-      console.log('Hospital login:', data);
-      navigation.navigate('HospitalHome', { hospital: data.user });
+      setLoading(true);
+      const response = await hospitalLoginReq(email, password);
+  
+      const hospitalData =response.user;
+      const token = response.token;
+
+      if (!hospitalData) {
+        throw new Error("Hastane verisi alınamadı");
+      }
+
+      const loggedInHospital = { ...hospitalData, type: 'hospital' };
+
+      if (token) await AsyncStorage.setItem('userToken', token);
+      await AsyncStorage.setItem('userInfo', JSON.stringify(loggedInHospital));
+
+      setUser(loggedInHospital);
+
     } catch (error) {
-      console.log('Hospital login error:', error);
+      console.log("Login Error:", error);
       Alert.alert('Giriş Başarısız', 'Bilgilerinizi kontrol edin.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <ImageBackground
-      source={require('../assets/hospital-background.png')}
-      style={styles.background}
-      resizeMode="cover"
-    >
+    <ImageBackground source={require('../assets/hospital-background.png')} style={styles.background} resizeMode="cover">
       <View style={styles.container}>
-        
-        <FormInput
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-        />
-        <FormInput
-          placeholder="Şifre"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+        <FormInput placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" />
+        <FormInput placeholder="Şifre" value={password} onChangeText={setPassword} secureTextEntry />
 
-        <TouchableOpacity style={styles.button} onPress={handleHospitalLogin}>
-          <Text style={styles.buttonText}>Giriş Yap</Text>
-        </TouchableOpacity>
-
-        {/* Kayıt butonu bilinçli olarak eklenmedi */}
+        {loading ? (
+          <ActivityIndicator size="large" color="#e74c3c" style={{ marginTop: 20 }} />
+        ) : (
+          <Button title="Giriş Yap" onPress={handleHospitalLogin} />
+        )}
       </View>
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 24,
-    paddingTop: 100, 
-    backgroundColor: 'rgba(255, 255, 255, 0.0)',
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    color: '#e74c3c',
-    textAlign: 'center',
-    marginBottom: 32,
-  },
-  button: {
-    backgroundColor: '#e74c3c',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
+  background: { flex: 1, width: '100%', height: '100%' },
+  container: { flex: 1, justifyContent: 'center', padding: 24, paddingTop: 100, backgroundColor: 'rgba(255, 255, 255, 0.0)' },
 });
 
 export default HospitalLoginScreen;
